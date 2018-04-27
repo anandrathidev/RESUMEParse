@@ -342,9 +342,29 @@ def ExtractFirstLine(x):
 
 def ExtractParas(x):
   paraList =[]
+  #Parainfo={}
   for para in x.lstrip().split("\n\n") :
     paraList.append(para)
-  return pd.Series( { "paraList ": paraList , "paraCount": len(paraList) } )
+    summ = re.search('summary', para.lower())
+    if(summ is not None):
+      summ=para
+    exp = re.search('exp', para.lower())
+    if(exp is not None):
+      exp=para
+    skill = re.search('skill', para.lower())
+    if(skill is not None):
+      skill=para
+    edu = re.search('edu', para.lower())
+    if(edu is not None):
+      edu=para
+  return pd.Series( { "paraList ": paraList ,
+                     "paraCount": len(paraList),
+    "summ" :summ  ,
+    "exp" : exp,
+    "skill" : skill,
+    "edu" : edu
+
+                     } )
 
 
 ## Extract Email
@@ -357,6 +377,7 @@ firstLineDF = pd.DataFrame(resdf.apply(lambda x: ExtractFirstLine(x['RESUME_TEXT
 namesDF = pd.DataFrame(firstLineDF.apply(lambda x: extract_entities(x['Firstline']) , axis=1))
 ParasDF = pd.DataFrame(resdf.apply(lambda x: ExtractParas(x['RESUME_TEXT']) , axis=1))
 
+ParasDF100 = ParasDF.head(100)
 
 from collections import Counter
 words = []
