@@ -5,6 +5,14 @@ Created on Sat May 12 19:13:12 2018
 @author: anandrathi
 """
 import os
+import inspect
+from inspect import currentframe, getframeinfo
+
+def get_linenumber():
+    cf = currentframe()
+    return cf.f_back.f_lineno
+
+
 path="C:/Users/anandrathi/Documents/DataScieince/Coursera/NLP/natural-language-processing-master/week1"
 os.chdir(path)
 
@@ -35,11 +43,14 @@ train = read_data('data/train.tsv')
 validation = read_data('data/validation.tsv')
 test = pd.read_csv('data/test.tsv', sep='\t')
 
-len(X_train)
-len(y_train )
 X_train, y_train = train['title'].values, train['tags'].values
 X_val, y_val = validation['title'].values, validation['tags'].values
 X_test = test['title'].values
+
+print("X_train {}".format( len(X_train)))
+print("y_train  {}".format( len(y_train )))
+
+import re
 
 REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;]')
 BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
@@ -87,10 +98,15 @@ text_prepare_results = '\n'.join(prepared_questions)
 
 grader.submit_tag('TextPrepare', text_prepare_results)
 
-
 X_train = [text_prepare(x) for x in X_train]
 X_val = [text_prepare(x) for x in X_val]
 X_test = [text_prepare(x) for x in X_test]
+
+
+message = 'Code location {0.filename}@{0.lineno}:'.format(inspect.getframeinfo(inspect.currentframe()))
+print(" X_train {}".format( len(X_train) ))
+print("y_train  {}".format( len(y_train )))
+
 
 len(X_train)
 
@@ -137,7 +153,7 @@ most_common_words = sorted(words_counts.items(), key=lambda x: x[1], reverse=Tru
 grader.submit_tag('WordsTagsCount', '%s\n%s' % (','.join(tag for tag, _ in most_common_tags),
                                                 ','.join(word for word, _ in most_common_words)))
 
-DICT_SIZE = 5000
+DICT_SIZE = 50000
 from sklearn.feature_extraction.text import CountVectorizer
 
 WORDS_TO_INDEX = { word:index for index, word in enumerate( dict(Counter(words_counts).most_common(DICT_SIZE)).keys() ) }
@@ -180,15 +196,17 @@ from scipy import sparse as sp_sparse
 X_train_mybag = sp_sparse.vstack([sp_sparse.csr_matrix(my_bag_of_words(text, WORDS_TO_INDEX, DICT_SIZE)) for text in X_train])
 X_val_mybag = sp_sparse.vstack([sp_sparse.csr_matrix(my_bag_of_words(text, WORDS_TO_INDEX, DICT_SIZE)) for text in X_val])
 X_test_mybag = sp_sparse.vstack([sp_sparse.csr_matrix(my_bag_of_words(text, WORDS_TO_INDEX, DICT_SIZE)) for text in X_test])
+
+print( "This is line {} ".format( get_linenumber()))
 print('X_train shape ', X_train_mybag.shape)
 print('X_val shape ', X_val_mybag.shape)
 print('X_test shape ', X_test_mybag.shape)
 
-len(X_train)
+#message = 'Code location {0.filename}@{0.lineno}:'.format(inspect.getframeinfo(inspect.currentframe()))
+print( "This is line {} ".format( get_linenumber()))
+print(" X_train {}".format( len(X_train)) )
+print("y_train  {}".format( len(y_train )))
 
-xall=X_train
-xall.extend(X_val)
-xall.extend(X_test)
 
 #Task 3 (BagOfWords)
 row = X_train_mybag[10].toarray()[0]
@@ -199,6 +217,9 @@ grader.submit_tag('BagOfWords', str(non_zero_elements_count))
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
+print( "This is line {} ".format( get_linenumber()))
+print(" X_train {}".format( len(X_train)))
+print("y_train  {}".format( len(y_train )))
 def tfidf_features(X_train, X_val, X_test):
     """
         X_train, X_val, X_test — samples
@@ -214,7 +235,9 @@ def tfidf_features(X_train, X_val, X_test):
     ######################################
     #tfidf_vectorizer = TfidfVectorizer()####### YOUR CODE HERE #######
     tfidf_vectorizer = TfidfVectorizer(token_pattern='(\S+)', analyzer='word')
-    xall=X_train
+    xall=X_train.copy()
+    xall.extend(X_val)
+    xall.extend(X_test)
     #xall.extend(X_val)
     #xall.extend(X_test)
     tfidf_vectorizer =  tfidf_vectorizer.fit(xall)
@@ -223,8 +246,14 @@ def tfidf_features(X_train, X_val, X_test):
 len(X_train)
 len(train['tags'].values)
 
+print( "This is line {} ".format( get_linenumber()))
+
+
 X_train_tfidf, X_val_tfidf, X_test_tfidf, tfidf_vocab = tfidf_features(X_train, X_val, X_test)
 tfidf_reversed_vocab = {i:word for word,i in tfidf_vocab.items()}
+print( "This is line {} ".format( get_linenumber()))
+print(" X_train {}".format( len(X_train)))
+print("y_train  {}".format( len(y_train )))
 
 tfidf_vocab["c++"]
 tfidf_vocab["c#"]
@@ -263,6 +292,12 @@ classifier_tfidf = train_classifier(X_train_tfidf, y_train)
 X_train_tfidf.shape
 y_train.shape
 
+print( "This is line {} ".format( get_linenumber()))
+print(" X_train {}".format( len(X_train)))
+print(" y_train  {}".format( len(y_train )))
+
+print(" X_train_tfidf.shape {}".format( X_train_tfidf.shape ))
+print("y_train  {}".format( y_train.shape))
 
 y_val_predicted_labels_mybag = classifier_mybag.predict(X_val_mybag)
 y_val_predicted_scores_mybag = classifier_mybag.decision_function(X_val_mybag)
@@ -318,6 +353,11 @@ def print_evaluation_scores(y_val, predicted):
     #print( "f1_score={}".format( f1_score(y_val, predicted)))
 
 
+
+print( "This is line {} ".format( get_linenumber()))
+print(" X_train {}".format( len(X_train)))
+print("y_train  {}".format( len(y_train )))
+
 print('\nBag-of-words')
 print_evaluation_scores(y_val, y_val_predicted_labels_mybag)
 print('\nTfidf')
@@ -325,7 +365,7 @@ print_evaluation_scores(y_val, y_val_predicted_labels_tfidf)
 
 
 from metrics import roc_auc
-%matplotlib inline
+##matplotlib inline
 n_classes = len(tags_counts)
 roc_auc(y_val, y_val_predicted_scores_mybag, n_classes)
 
@@ -333,3 +373,48 @@ roc_auc(y_val, y_val_predicted_scores_mybag, n_classes)
 n_classes = len(tags_counts)
 roc_auc(y_val, y_val_predicted_scores_tfidf, n_classes)
 
+
+
+##**Task 4 (MultilabelClassification).** Once we have the evaluation set up,
+## we suggest that you experiment a bit with training
+
+def train_classifier(X_train, y_train, c):
+    """
+      X_train, y_train — training data
+
+      return: trained classifier
+    """
+
+    # Create and fit LogisticRegression wraped into OneVsRestClassifier.
+    ######################################
+    ######### YOUR CODE HERE #############
+    ######################################
+    cls = OneVsRestClassifier(LogisticRegression(C=c))
+    cls.fit(X_train, y_train)
+    return cls
+
+
+for c in [0.1, 1, 10, 100]:
+  classifier_mybag = train_classifier(X_train_mybag, y_train, c=c)
+  classifier_tfidf = train_classifier(X_train_tfidf, y_train, c=c)
+
+
+y_test_predicted_labels_mybag = classifier_mybag.predict( X_test_mybag )
+y_test_predicted_scores_mybag = classifier_mybag.decision_function( X_test_mybag )
+
+y_test_predicted_labels_tfidf = classifier_tfidf.predict(X_test_tfidf)
+y_test_predicted_scores_tfidf = classifier_tfidf.decision_function(X_test_tfidf)
+
+y_test_pred_inversed = mlb.inverse_transform(y_test_predicted_labels_tfidf)
+y_test_inversed = mlb.inverse_transform(y_test)
+
+print('\nBag-of-words')
+print_evaluation_scores(y_test, y_test_predicted_labels_mybag)
+print('\nTfidf')
+print_evaluation_scores(y_test, y_test_predicted_labels_tfidf)
+
+test_predictions = ######### YOUR CODE HERE #############
+test_pred_inversed = mlb.inverse_transform(test_predictions)
+
+test_predictions_for_submission = '\n'.join('%i\t%s' % (i, ','.join(row)) for i, row in enumerate(test_pred_inversed))
+grader.submit_tag('MultilabelClassification', test_predictions_for_submission)
