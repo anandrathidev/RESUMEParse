@@ -52,76 +52,42 @@ PAT = re.compile(EMAIL_PATTERN)
 resdfInit = pd.read_json(xpath + "ALLRES.json", orient='records')
 list(resdfInit.columns)
 resdfInit.head(1).index
-res1 = resdfInit['RESUME_TEXT'].head(1)[0]
+res1 = resdfInit['RESUME_TEXT'].head(10000)[202]
+print(res1)
 
-HeadingDFJson = pd.read_json(xpath + "HeadingsJSON.json", orient='records')
-list(HeadingDFJson.columns)
-HeadingDFJson['HEADINGS']
-
-
-
+def GetHeadingsSets():
+  from itertools import chain
+  HeadingDFJson = pd.read_json(xpath + "HeadingsJSON.json", orient='records')
+  list(HeadingDFJson.columns)
+  HList =  [ htokl.split(",") for htokl in  list(HeadingDFJson['HEADINGS'])  ]
+  HList =  [ Hitem.strip().lower() for Hitem in list(chain(*HList)) if Hitem.strip().lower() !="" ]
+  return set( HList[:] )
 
 #from nameparser.parser import HumanName
 
-def extract_entities(text):
-  allnames=""
-  for sent in nltk.sent_tokenize(text):
-    for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
-      #print("chunk {}".format(chunk))
-      #print("chunk {}".format(chunk))
-      if (chunk[1] == 'VBN' or
-          chunk[1] == 'VBP' or
-          chunk[1] == 'VBG' or
-          chunk[1] == 'VBD' or
-          chunk[1] == 'IN' or
-          chunk[1] == 'CC' or
-          chunk[1] == 'VB' ):
-        pass
-      else:
-        if hasattr(chunk, 'label'):
-          names=' '.join(c[0] for c in chunk.leaves())
-          allnames = allnames + " " + names
-        else :
-          #log.write( str("chunk {}".format(chunk) + "\n").encode('ascii', errors='ignore').decode('ascii', errors='ignore') )
-          if(chunk[1] == 'JJ' and len(chunk[0])>2 ):
-            pass
-          allnames = allnames + " " + chunk[0]
-  #return(allnames.strip())
-  return(pd.Series( { "nameline": allnames} ))
+HeadSet = list(GetHeadingsSets())
 
-def get_human_names(text):
-  tokens = nltk.tokenize.word_tokenize(text)
-  pos = nltk.pos_tag(tokens)
-  sentt = nltk.ne_chunk(pos, binary = False)
-  print("sentt {}".format(sentt))
-  person_list = []
-  person = []
-  name = ""
-  def Filterlambda( t):
-    #print("t {}".format(t));
-    label=t.label()
-    print("label {}".format(t.label));
-    return label == 'PERSON'
+def CreateHeadRegExp(HeadSet):
+  HeadExtraxtRegStr = r"(" + r"|".join(HeadSet) +   r")[: ]*" + r"(.*?)" + r"(" + r"|".join(HeadSet) +   r")"
+  HeadExtraxtRe = re.compile(HeadExtraxtRegStr, flags= re.I | re.DOTALL )
+  return HeadExtraxtRe
 
-  subtreeList = list(sentt.subtrees(filter=lambda t: Filterlambda(t) ))
-  #subtreeList = list(sentt.subtrees(filter=lambda t: t.label() == 'PERSON'))
-  print("subtreeList {}".format(subtreeList))
-  for subtree in subtreeList:
-    print("subtree={}".format(subtree))
-    for leaf in subtree.leaves():
-      print("leaf={}".format(leaf[0]))
-      person.append(leaf[0])
-      print("person={}".format(person))
-      if len(person) > 1: #avoid grabbing lone surnames
-        for part in person:
-          name += part + ' '
-          print("name[:-1]={}".format(name[:-1]))
-          if name[:-1] not in person_list:
-            person_list.append(name[:-1])
-        #name = ''
-      #person = []
-  print(name)
-  return pd.Series( { "nameline": name} )
+HeadExtraxtRe = CreateHeadRegExp(HeadSet)
+matchRes =  HeadExtraxtRe.search(res1)
+
+print(matchRes.group(0))
+print(matchRes.group(1))
+print(matchRes.group(2))
+print(matchRes.group(3))
+print(matchRes.group(4))
+print(matchRes.group(5))
+
+
+
+def ExtraxtParas(HeadExtraxtRe):
+  HeadExtraxtRegStr = "(" + "|".join(HeadSet) +   ")" + "(.*?)()" + "(" + "|".join(HeadSet) +   ")"
+  HeadExtraxtRe = re.compile(HeadExtraxtRegStr, flags= re.I | re.DOTALL )
+  return HeadExtraxtRe
 
 
 headings=[]
