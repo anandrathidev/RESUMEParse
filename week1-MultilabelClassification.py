@@ -12,8 +12,8 @@ def get_linenumber():
     cf = currentframe()
     return cf.f_back.f_lineno
 
-
 path="C:/Users/anandrathi/Documents/DataScieince/Coursera/NLP/natural-language-processing-master/week1"
+path="C:/temp/DataScience/TextParseNLP/natural-language-processing-master/week1/"
 os.chdir(path)
 
 import sys
@@ -27,6 +27,7 @@ from grader import Grader
 grader = Grader()
 
 import nltk
+nltk.set_proxy('http://he21061:Bollocks22@proxyserver.health.wa.gov.au:8181',)
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 
@@ -55,6 +56,7 @@ import re
 REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;]')
 BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
 STOPWORDS = set(stopwords.words('english'))
+REMOVE_ALLNUMBER_WORDS =  re.compile(r'\b[0-9]+\b')
 
 def text_prepare(text):
     """
@@ -67,6 +69,8 @@ def text_prepare(text):
     text = REPLACE_BY_SPACE_RE.sub(" ", str(text)) # replace REPLACE_BY_SPACE_RE symbols by space in text
     #print("REPLACE_BY_SPACE_RE {}".format(text) )
     text = BAD_SYMBOLS_RE.sub("", text) # delete symbols which are in BAD_SYMBOLS_RE from text
+    text = REMOVE_ALLNUMBER_WORDS.sub("", text) # delete numbers only words
+
     #print("BAD_SYMBOLS_RE {}".format(text) )
     text = text.strip()
     #print("strip {}".format(text) )
@@ -74,7 +78,10 @@ def text_prepare(text):
     #print("STOPWORDS {}".format(text) )
     return text
 
-
+ttext= " this @!$#@#%$#$ 1675 is suppose%%% to be a really 8738273 ^&%&^%&^%^&%#@ b56564ad te&^$%^%$^%($xt)" 
+print( ttext)
+print( text_prepare(ttext))
+re.sub(r'\b[0-9]+\b', '', ttext)
 
 def test_text_prepare():
     examples = ["SQL Server - any equivalent of Excel's CHOOSE function?",
@@ -103,7 +110,6 @@ X_val = [text_prepare(x) for x in X_val]
 X_test = [text_prepare(x) for x in X_test]
 
 
-message = 'Code location {0.filename}@{0.lineno}:'.format(inspect.getframeinfo(inspect.currentframe()))
 print(" X_train {}".format( len(X_train) ))
 print("y_train  {}".format( len(y_train )))
 
@@ -121,7 +127,6 @@ import pandas as pd
 import numpy as np
 
 
-
 # Dictionary of all tags from train corpus with their counts.
 tags_counts = {}
 # Dictionary of all words from train corpus with their counts.
@@ -135,10 +140,11 @@ words_counts = {}
 ######### YOUR CODE HERE #############
 ######################################
 from collections import Counter
-text = " ".join(X_train)
-words_counts = dict(Counter( text.split()))
-text = " ".join([" ".join(tags) for tags in y_train][:])
-tags_counts = dict(Counter( text.split()))
+text = ",".join( [ ",".join(l) for l in  list(train['tags'].values) ]).split(",")
+tags_counts = dict(Counter( text))
+
+text =  ",".join( X_train).split(",")
+words_counts = dict(Counter( text))
 
 
 mctags = ",".join([ tag[0] for tag in list(Counter(words_counts).most_common(3)) ] )
@@ -220,6 +226,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 print( "This is line {} ".format( get_linenumber()))
 print(" X_train {}".format( len(X_train)))
 print("y_train  {}".format( len(y_train )))
+
 def tfidf_features(X_train, X_val, X_test):
     """
         X_train, X_val, X_test — samples
@@ -234,7 +241,10 @@ def tfidf_features(X_train, X_val, X_test):
     ######### YOUR CODE HERE #############
     ######################################
     #tfidf_vectorizer = TfidfVectorizer()####### YOUR CODE HERE #######
-    tfidf_vectorizer = TfidfVectorizer(token_pattern='(\S+)', analyzer='word')
+    tfidf_vectorizer = TfidfVectorizer(token_pattern='(\S+)', ngram_range=(1,4) ,  
+                                       analyzer='word', 
+                                       min_df=2, 
+                                       max_df = 0.98)
     xall=X_train.copy()
     xall.extend(X_val)
     xall.extend(X_test)
@@ -255,6 +265,8 @@ print( "This is line {} ".format( get_linenumber()))
 print(" X_train {}".format( len(X_train)))
 print("y_train  {}".format( len(y_train )))
 
+X_train_tfidf.shape
+
 tfidf_vocab["c++"]
 tfidf_vocab["c#"]
 tfidf_vocab["java"]
@@ -270,13 +282,13 @@ y_val = mlb.fit_transform(y_val)
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.linear_model import LogisticRegression, RidgeClassifier
 
+
 def train_classifier(X_train, y_train):
     """
       X_train, y_train — training data
 
       return: trained classifier
     """
-
     # Create and fit LogisticRegression wraped into OneVsRestClassifier.
     ######################################
     ######### YOUR CODE HERE #############
@@ -308,13 +320,23 @@ y_val_predicted_scores_tfidf = classifier_tfidf.decision_function(X_val_tfidf)
 
 y_val_pred_inversed = mlb.inverse_transform(y_val_predicted_labels_tfidf)
 y_val_inversed = mlb.inverse_transform(y_val)
-
-for i in range(3):
+for i in range(10):
     print('Title:\t{}\nTrue labels:\t{}\nPredicted labels:\t{}\n\n'.format(
         X_val[i],
         ','.join(y_val_inversed[i]),
         ','.join(y_val_pred_inversed[i])
     ))
+
+y_val_pred_inversed = mlb.inverse_transform(y_val_predicted_labels_mybag)
+y_val_inversed = mlb.inverse_transform(y_val)
+for i in range(10):
+    print('Title:\t{}\nTrue labels:\t{}\nPredicted labels:\t{}\n\n'.format(
+        X_val[i],
+        ','.join(y_val_inversed[i]),
+        ','.join(y_val_pred_inversed[i])
+    ))
+
+
 
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
@@ -406,15 +428,202 @@ y_test_predicted_labels_tfidf = classifier_tfidf.predict(X_test_tfidf)
 y_test_predicted_scores_tfidf = classifier_tfidf.decision_function(X_test_tfidf)
 
 y_test_pred_inversed = mlb.inverse_transform(y_test_predicted_labels_tfidf)
-y_test_inversed = mlb.inverse_transform(y_test)
+
+
+##########################################################################################################
+
+REMOVE_ALLNUMBER_WORDS =  re.compile(r'\b[0-9]+\b')
+def text_prepare(text):
+    """
+        text: a string
+
+        return: modified initial string
+    """
+    text = text.lower() # lowercase text
+    #print("lowercase text {}".format(text) )
+    text = REPLACE_BY_SPACE_RE.sub(" ", str(text)) # replace REPLACE_BY_SPACE_RE symbols by space in text
+    #print("REPLACE_BY_SPACE_RE {}".format(text) )
+    text = BAD_SYMBOLS_RE.sub("", text) # delete symbols which are in BAD_SYMBOLS_RE from text
+    text = REMOVE_ALLNUMBER_WORDS.sub("", text) # delete numbers only words
+
+    #print("BAD_SYMBOLS_RE {}".format(text) )
+    text = text.strip()
+    #print("strip {}".format(text) )
+    text = " ".join( [ w for w in  text.split() if not w in STOPWORDS] )  # delete stopwords from text
+    #print("STOPWORDS {}".format(text) )
+    return text
+
+
+def test_text_prepare():
+    examples = ["SQL Server - any equivalent of Excel's CHOOSE function?",
+                "How to free c++ memory vector<int> * arr?"]
+    answers = ["sql server equivalent excels choose function",
+               "free c++ memory vectorint arr"]
+    for ex, ans in zip(examples, answers):
+        if text_prepare(ex) != ans:
+            return "Wrong answer for the case: '%s'" % ex
+    return 'Basic tests are passed.'
+
+
+print(test_text_prepare())
+
+
+prepared_questions = []
+for line in open('data/text_prepare_tests.tsv', encoding='utf-8'):
+    line = text_prepare(line.strip())
+    prepared_questions.append(line)
+text_prepare_results = '\n'.join(prepared_questions)
+
+grader.submit_tag('TextPrepare', text_prepare_results)
+
+X_train = [text_prepare(x) for x in X_train]
+X_val = [text_prepare(x) for x in X_val]
+X_test = [text_prepare(x) for x in X_test]
+
+
+
+
+
+def train_classifierNew(X_train, y_train):
+    """
+      X_train, y_train — training data
+      
+      return: trained classifier
+    """
+    # Create and fit LogisticRegression wraped into OneVsRestClassifier.
+    from sklearn.multiclass import OneVsRestClassifier
+    from sklearn.model_selection import GridSearchCV
+    from sklearn.metrics import f1_score
+    from sklearn.model_selection import StratifiedKFold
+    ######################################
+    ######### YOUR CODE HERE #############
+    ######################################    
+    penalty = ['l1', 'l2']
+    C = [0.1, 1, 10, 100]
+    hyperparameters = {"estimator__C": C, "estimator__penalty":penalty}
+    
+    ovsr = OneVsRestClassifier( LogisticRegression(penalty='l2') )
+    #score_func = make_scorer(metrics.f1_score)
+    
+    clf = GridSearchCV(ovsr, param_grid=hyperparameters, 
+                       cv=3,
+                       verbose=0, 
+                       scoring="f1_weighted")
+    best_model = clf.fit(X_train, y_train)
+    return best_model
+
+classifier_mybag = train_classifierNew(X_train_mybag, y_train)
+classifier_tfidf = train_classifierNew(X_train_tfidf, y_train)
+
+X_train_tfidf.shape
+y_train.shape
+
+print( "This is line {} ".format( get_linenumber()))
+print(" X_train {}".format( len(X_train)))
+print(" y_train  {}".format( len(y_train )))
+
+print(" X_train_tfidf.shape {}".format( X_train_tfidf.shape ))
+print("y_train  {}".format( y_train.shape))
+
+y_val_predicted_labels_mybag = classifier_mybag.predict(X_val_mybag)
+y_val_predicted_scores_mybag = classifier_mybag.decision_function(X_val_mybag)
+
+y_val_predicted_labels_tfidf = classifier_tfidf.predict(X_val_tfidf)
+y_val_predicted_scores_tfidf = classifier_tfidf.decision_function(X_val_tfidf)
+
+
+y_val_pred_inversed = mlb.inverse_transform(y_val_predicted_labels_tfidf)
+y_val_inversed = mlb.inverse_transform(y_val)
+for i in range(10):
+    print('Title:\t{}\nTrue labels:\t{}\nPredicted labels:\t{}\n\n'.format(
+        X_val[i],
+        ','.join(y_val_inversed[i]),
+        ','.join(y_val_pred_inversed[i])
+    ))
+
+y_val_pred_inversed = mlb.inverse_transform(y_val_predicted_labels_mybag)
+y_val_inversed = mlb.inverse_transform(y_val)
+for i in range(10):
+    print('Title:\t{}\nTrue labels:\t{}\nPredicted labels:\t{}\n\n'.format(
+        X_val[i],
+        ','.join(y_val_inversed[i]),
+        ','.join(y_val_pred_inversed[i])
+    ))
+
+
+
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import average_precision_score
+from sklearn.metrics import recall_score
+
+#sklearn.metrics  MultiLabelBinarizer
+def print_evaluation_scores(y_val, predicted):
+    ######################################
+    ######### YOUR CODE HERE #############
+    ######################################
+    print( "accuracy={}".format( accuracy_score(y_val, predicted)))
+    print( "")
+    print( "roc_auc_score={}".format( roc_auc_score(y_val, predicted)))
+    print( "")
+    print( "average_precision_score={}".format( average_precision_score(y_val, predicted)))
+    print( "")
+
+    print( "macro average_precision_score={}".format( average_precision_score(y_val, predicted, average = "macro")))
+    print( "micro average_precision_score={}".format( average_precision_score(y_val, predicted, average = "micro")))
+    print( "weighted average_precision_score={}".format( average_precision_score(y_val, predicted, average = "weighted")))
+
+    print( "")
+
+    print( "macro recall_score={}".format( recall_score(y_val, predicted, average = "macro")))
+    print( "micro recall_score={}".format( recall_score(y_val, predicted, average = "micro")))
+    print( "weighted recall_score={}".format( recall_score(y_val, predicted, average = "weighted")))
+    print( "")
+
+    print( "macro f1_score={}".format( f1_score(y_val, predicted, average = "macro")))
+    print( "micro f1_score={}".format( f1_score(y_val, predicted, average = "micro")))
+    print( "weighted f1_score={}".format( f1_score(y_val, predicted, average = "weighted")))
+
+
+    #print( "f1_score={}".format( f1_score(y_val, predicted)))
+
+
+
+print( "This is line {} ".format( get_linenumber()))
+print(" X_train {}".format( len(X_train)))
+print("y_train  {}".format( len(y_train )))
 
 print('\nBag-of-words')
-print_evaluation_scores(y_test, y_test_predicted_labels_mybag)
+print_evaluation_scores(y_val, y_val_predicted_labels_mybag)
 print('\nTfidf')
-print_evaluation_scores(y_test, y_test_predicted_labels_tfidf)
+print_evaluation_scores(y_val, y_val_predicted_labels_tfidf)
 
-test_predictions = ######### YOUR CODE HERE #############
-test_pred_inversed = mlb.inverse_transform(test_predictions)
 
-test_predictions_for_submission = '\n'.join('%i\t%s' % (i, ','.join(row)) for i, row in enumerate(test_pred_inversed))
-grader.submit_tag('MultilabelClassification', test_predictions_for_submission)
+from metrics import roc_auc
+##matplotlib inline
+n_classes = len(tags_counts)
+roc_auc(y_val, y_val_predicted_scores_mybag, n_classes)
+
+
+n_classes = len(tags_counts)
+roc_auc(y_val, y_val_predicted_scores_tfidf, n_classes)
+
+
+
+
+#y_test_inversed = mlb.inverse_transform(y_test)
+
+#print('\nBag-of-words')
+#print_evaluation_scores(y_test, y_test_predicted_labels_mybag)
+#print('\nTfidf')
+#print_evaluation_scores(y_test, y_test_predicted_labels_tfidf)
+
+#test_predictions = ######### YOUR CODE HERE #############
+#test_pred_inversed = mlb.inverse_transform(test_predictions)
+
+#test_predictions_for_submission = '\n'.join('%i\t%s' % (i, ','.join(row)) for i, row in enumerate(test_pred_inversed))
+#grader.submit_tag('MultilabelClassification', test_predictions_for_submission)
+
+
+
