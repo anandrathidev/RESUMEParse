@@ -65,15 +65,137 @@ def GetHeadingsSets():
 
 #from nameparser.parser import HumanName
 
-HeadSet = list(GetHeadingsSets())
+HeadSet = GetHeadingsSets()
+type(HeadSet)
+
+"project" in HeadSet
+
+avgHeaderLen = np.mean([ len(head) for  head in HeadSet if len(head.strip())>0 ])
+avgHeaderWords = np.mean([ len(head.split()) for  head in HeadSet if len(head.strip())>0 ])
+stdHeaderWords = np.std([ len(head.split()) for  head in HeadSet if len(head.strip())>0 ])
+
+def CreateAllHeadRegExp(HeadSet):
+  regList = []
+  for h in HeadSet:
+    HeadExtraxtRegStr = h
+    HeadExtraxtRe = re.compile(h, flags= re.I)
+    regList.append(HeadExtraxtRe)
+  return regList
+
+def MatchRegExp(text, cregs):
+  matchcount = 0
+  for hr in cregs:
+    m = hr.match( text)
+    if m:
+      matchcount += 1
+  return matchcount
 
 def CreateHeadRegExp(HeadSet):
   HeadExtraxtRegStr = r"(" + r"|".join(HeadSet) +   r")[: ]*" + r"(.*?)" + r"(" + r"|".join(HeadSet) +   r")"
   HeadExtraxtRe = re.compile(HeadExtraxtRegStr, flags= re.I | re.DOTALL )
   return HeadExtraxtRe
 
-HeadExtraxtRe = CreateHeadRegExp(HeadSet)
+hregall =  CreateAllHeadRegExp(HeadSet)
+
+avgLen = np.mean([ len(rline) for  rline in rlines if len(rline.strip())>0 ])
+avgWordCount = np.mean([ len(rline.split()) for  rline in rlines if len(rline.strip())>0 ])
+stdWordCount = np.std([ len(rline.split()) for  rline in rlines if len(rline.strip())>0 ])
+
+from scipy import stats
+np.random.seed(7654567)
+
+rvsWord = stats.norm.rvs(loc=avgWordCount, scale=stdWordCount, size=(50))
+rvsHeader = stats.norm.rvs(loc=avgHeaderWords, scale=stdHeaderWords, size=(50))
+
+HeaderStack=[]
+Para=[]
+ParaLines=[]
+rlines = res1.splitlines()
+lastHeader=""
+for line in rlines:
+   isHeader=0
+   isMatch=0
+   line=line.strip()
+   words = line.split()
+   wcnt = len(words)
+   ##is this a heading ??
+   if MatchRegExp(text=line, cregs=hregall)>0:
+     #most probablity this is an header line
+     isHeader+=1
+     isMatch=1
+     print("is in header list :{}".format(line))
+   pval = stats.ttest_1samp(rvsWord, wcnt)
+   if abs(pval.pvalue) < 0.05:
+     isHeader+=1
+   wpval = stats.ttest_1samp(rvsHeader, wcnt)
+   if abs(wpval.pvalue) > 0.05:
+     isHeader+=1
+   if isHeader>2 and isMatch:
+     if len(HeaderStack) >0:
+       lastHeader=HeaderStack.pop()
+     if len(ParaLines) >0:
+       Para.append( { lastHeader: " ".join(ParaLines)} )
+       lastHeader=""
+       ParaLines=[]
+     HeaderStack.append(line)
+     print("")
+     print("")
+     print("==============isHeader={}".format(isHeader))
+     print(line)
+     print("============================")
+   elif isHeader>2 :
+     print("")
+     print("")
+     print("===== Sub Header==============isHeader={}".format(isHeader))
+     print(line)
+     print("============================")
+     print("")
+   else:
+     if len(HeaderStack) >0:
+       ParaLines.append(line)
+
+if len(HeaderStack) >0:
+  lastHeader=HeaderStack.pop()
+if len(ParaLines) >0:
+  Para.append( { lastHeader: " ".join(ParaLines)} )
+  lastHeader=""
+  ParaLines=[]
+
+print(Para)
+
+#ParaReg = re.compile(r"(\n|^)(.*?)(?=\n|$)")
+
+ParaReg = re.compile(r"(\.\s)?(?[A-Z][^\.]+\.)")
+i=0
+for paras in re.finditer(ParaReg, res1):
+  i=i+1
+  print(i)
+  if not paras is None:
+    print("============== START")
+    if not paras.group(0) == "":
+      print("============== group 0")
+      print( paras.group(0))
+    if not paras.group(1) == "":
+      print("============== group 1")
+      print( paras.group(1))
+    #if not paras.group(2) == "":
+    #  print("============== group 2")
+    #  print( paras.group(2))
+    print("============== END")
+
+print(matchRes.group(0))
+print(matchRes.group(1))
+print(matchRes.group(2))
+print(matchRes.group(3))
+print(matchRes.group(4))
+print(matchRes.group(5))
+
+
+HeadExtraxtRe = CreateHeadRegExp(list(HeadSet))
 matchRes =  HeadExtraxtRe.search(res1)
+
+for rline in res1.split("\n"):
+  if
 
 print(matchRes.group(0))
 print(matchRes.group(1))
