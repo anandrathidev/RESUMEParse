@@ -8,11 +8,13 @@ import pandas as pd
 import re
 import numpy as np
 import json
-
+import nltk
 import MainHeaders
-
-xpath = "C:/Users/anand.rathi/Documents/tmp/ALEEP/"
+ 
 xpath = "D:/Users/anandrathi/Documents/personal/Bussiness/Aleep/"
+xpath = "C:/temp/DataScience/Aleep/"
+nltk.set_proxy('http://he159490:Monday07@proxyserver.health.wa.gov.au:8181', ('he159490', 'Monday07'))
+nltk.download('punkt')
 
 MainHeaders.getMainHeaders()
 
@@ -36,8 +38,6 @@ resdfInit = pd.read_json(xpath + "ALLRES.json", orient='records')
 list(resdfInit.columns)
 resdfInit.head(1).index
 
-res1 = resdfInit['RESUME_TEXT'].head(10000)[202]
-print(res1)
 
 
 
@@ -57,14 +57,10 @@ HeadSet
 
 "project" in HeadSet
 
-avgHeaderLen = np.mean([ len(head) for  head in HeadSet if len(head.strip())>0 ])
-stdHeaderLen = np.std([ len(head) for  head in HeadSet if len(head.strip())>0 ])
-avgHeaderWords = np.mean([ len(head.split()) for  head in HeadSet if len(head.strip())>0 ])
-stdHeaderWords = np.std([ len(head.split()) for  head in HeadSet if len(head.strip())>0 ])
 
 textSer = resdfInit['RESUME_TEXT']
 
-def GetAvgLineDetails(textSer=textSer, avgHeaderWords=avgHeaderWords,  avgHeaderLen=stdHeaderLen):
+def GetAvgLineDetails(textSer, avgHeaderWords,  avgHeaderLen):
   rlines=[]
   for item in textSer.iteritems():
     rlines.extend(item[1].splitlines() )
@@ -76,10 +72,6 @@ def GetAvgLineDetails(textSer=textSer, avgHeaderWords=avgHeaderWords,  avgHeader
   return avgWordLen,stdWordLen ,avgWordCount, stdWordCount
 
 
-if False:
-  avgWordLen,stdWordLen ,avgWordCount, stdWordCount = GetAvgLineDetails(textSer=textSer, avgHeaderWords=avgHeaderWords, avgHeaderLen=stdHeaderLen)
-else:
-  avgWordLen,stdWordLen ,avgWordCount, stdWordCount = (56.257, 57.566, 7.79, 8.369)
 
 def CreateAllHeadRegExp(HeadSet):
   regList = []
@@ -88,7 +80,7 @@ def CreateAllHeadRegExp(HeadSet):
     regList.append(HeadExtraxtRe)
   return regList
 
-def MatchRegExp(text, cregs):
+def MatchRegExp(text, cregs,  ):
   matchcount = 0
   for hr in cregs:
     m = hr.match( text)
@@ -101,23 +93,11 @@ def CreateHeadRegExp(HeadSet):
   HeadExtraxtRe = re.compile(HeadExtraxtRegStr, flags= re.I | re.DOTALL )
   return HeadExtraxtRe
 
-hregall =  CreateAllHeadRegExp(HeadSet)
 
 
 from scipy import stats
 np.random.seed(7654567)
 
-
-HeaderStack=[]
-Para=[]
-ParaLines=[]
-rlines = res1.splitlines()
-lastHeader=""
-
-rvsWord = stats.norm.rvs(loc=avgWordCount, scale=stdWordCount, size=(50))
-rvsHeader = stats.norm.rvs(loc=avgHeaderWords, scale=stdHeaderWords, size=(50))
-rvsWordLen = stats.norm.rvs(loc=avgWordLen, scale=stdWordLen, size=(50))
-rvsHeaderLen = stats.norm.rvs(loc=avgHeaderLen, scale=stdHeaderLen, size=(50))
 
 def HeaderStats(line,
                 avgWordCount,
@@ -158,222 +138,175 @@ def HeaderStats(line,
 
 
 
-def ExtractHeaderParas(text):
-  rlines = text.splitlines()
-  for line in rlines:
-    isHeader=0
-    isMatch=0
-    line=line.strip()
-    words = line.split()
-    wcnt = len(words)
-    ##is this a heading ??
-    isHeader += HeaderStats(line, avgWordCount, rvsWord, rvsHeader, rvsWordLen, rvsHeaderLen)
-    if MatchRegExp(text=line, cregs=hregall)>0:
-      #most probablity this is an header line
-      isHeader+=1
-      isMatch=1
-      #print("is in header list :{}   {}".format(line, isHeader))
-    if isHeader>=3 and isMatch:
-       #print("This is header :{}".format(line))
-       if len(HeaderStack) >0:
-         lastHeader=HeaderStack.pop()
-       if len(ParaLines) >0:
-         Para.append( { lastHeader: " ".join(ParaLines)} )
-         lastHeader=""
-         ParaLines=[]
-       HeaderStack.append(line)
-       if False:
-         print("")
-         print("")
-         print("==============isHeader={}".format(isHeader))
-         print(line)
-         print("============================")
-    elif isHeader>2:
-      if False:
-        print("")
-        print("")
-        print("===== Sub Header==============isHeader={}".format(isHeader))
-        print(line)
-        print("============================")
-        print("")
-    else:
-      if len(HeaderStack) >0:
-         ParaLines.append(line)
-
-  if len(HeaderStack) >0:
-    lastHeader=HeaderStack.pop()
-  if len(ParaLines) >0:
-    Para.append( { lastHeader: " ".join(ParaLines)} )
-    lastHeader=""
-    ParaLines=[]
-  return Para
-
-
-def ExtractAllProbableHeaders(resDF):
-  rlines=[]
-  for item in textSer.iteritems():
-    rlines.extend(item[1].splitlines() )
-  paralines = set()
-  newHeaders4 = set()
-  newHeaders3 = set()
-  newHeaders2 = set()
-  for line in rlines:
-    isHeader=0
-    #isMatch=0
-    line=line.strip()
-    #words = line.split()
-    #wcnt = len(words)
-    ##is this a heading ??
-    isHeader += HeaderStats(line, avgWordCount, rvsWord, rvsHeader, rvsWordLen, rvsHeaderLen)
-    if MatchRegExp(text=line, cregs=hregall)>0:
-      #most probablity this is an header line
-      isHeader+=1
-     # isMatch=1
-      #print("is in header list :{}   {}".format(line, isHeader))
-    if isHeader>=4:
-       #print("This is header :{}".format(line))
-       newHeaders4.add(line)
-    if isHeader==3:
-       #print("This is header :{}".format(line))
-       newHeaders3.add(line)
-    elif isHeader==2:
-      newHeaders2.add(line)
-    else:
-      paralines.add(line)
-  return newHeaders4, newHeaders3, newHeaders2, paralines
-
-
-textSer = resdfInit['RESUME_TEXT']
-newHeaders4,newHeaders3, newHeaders2, paralines = ExtractAllProbableHeaders(resDF=textSer)
-
-newHeaders4,newHeaders3, newHeaders2, paralines = list(set(newHeaders4)),list(set(newHeaders3)), list(set(newHeaders2)), list(set(paralines))
-
-len(newHeaders4)
-headLineExtraxtRE = re.compile( r"\s*([\w`’\s/&\(\)]+)*:*\.*(.*)" )
-#headLineExtraxtRE = re.compile( r"\s*([\w'\s/]+)*:*\.*(.*)" )
-HeadSetNew = set()
-for h in newHeaders4:
-  #m=headLineExtraxtRE.match(h)
-  print(h)
-  print([match.groups(0) for match in re.finditer(headLineExtraxtRE, h)][0][0])
-  print("")
-  HeadSetNew.add( str([match.groups(0) for match in re.finditer(headLineExtraxtRE, h)][0][0]).strip().lower() )
-oldHeaders  = set(MainHeaders.getMainHeaders())
-len(oldHeaders - HeadSetNew)
-len(HeadSetNew - oldHeaders )
-newHeadset = oldHeaders.update(HeadSetNew)
-len(oldHeaders)
-
-with open(xpath + "/ALLHEADERS.txt", "w" ) as allh:
-  for words in oldHeaders:
-    try:
-      allh.write( str(words) + ",\n" )
-    except Exception as e:
-      pass
-
-
-
-with open(xpath + "/newHeaders4.txt", "w" ) as h3:
-  for words in newHeaders4:
-    try:
-      h3.write( str(words) + "\n" )
-    except Exception as e:
-      pass
-
-with open(xpath + "/newHeaders3.txt", "w" ) as h3:
-  for words in newHeaders3:
-    try:
-      h3.write( str(words) + "\n" )
-    except Exception as e:
-      pass
-
-with open(xpath + "/newHeaders2.txt", "w" ) as h3:
-  for words in newHeaders2:
-    try:
-      h3.write( str(words) + "\n" )
-    except Exception as e:
-      pass
-
-with open(xpath + "/paralines.txt", "w" ) as h3:
-  for words in paralines:
-    try:
-      h3.write( str(words) + "\n" )
-    except Exception as e:
-      pass
-
-
-rlines=[]
-for item in textSer.iteritems():
-  rlines.extend(item[1].splitlines() )
-
-len(rlines)
-
 import MainHeaders
 oldHeaders  = list(set(MainHeaders.getMainHeaders()) - set("co") )
 oldHeaders = sorted(oldHeaders, key=lambda x: (-len(x), x) )
 oldHeaders = [ h.replace("(", r"\(" ).replace(")", r"\)" )  for h in oldHeaders ]
-HeadMatchpattern=r"\s*" + r"?("  + "|".join(oldHeaders) + r"):*\.*-*\s"
-HeadSplitpattern=r"\s*" + r"?("  + "|".join(oldHeaders) + r"):*\.*-*"
+"challenges" in set(oldHeaders)
+"objective" in set(oldHeaders)
+
+
+HeadMatchpattern=r"\s*" + r"?("  + "|".join(oldHeaders) + r")[:\.-\t\n]+"
+HeadSplitpattern=r"\s*" + r"?("  + "|".join(oldHeaders) + r")\s*[:-\\t]+\s*"
+hregall =  CreateAllHeadRegExp(oldHeaders)
+
+antiHeaders = MainHeaders.getAntiHeaders()
+AntiHeadMatchpattern=r"\s*" + r"?("  + "|".join(antiHeaders) + r")"
+
+
+
+
+avgHeaderLen = np.mean([ len(head) for  head in oldHeaders if len(head.strip())>0 ])
+stdHeaderLen = np.std([ len(head) for  head in oldHeaders if len(head.strip())>0 ])
+avgHeaderWords = np.mean([ len(head.split()) for  head in oldHeaders if len(head.strip())>0 ])
+stdHeaderWords = np.std([ len(head.split()) for  head in oldHeaders if len(head.strip())>0 ])
 
 AllresumesPara=[]
 avgWordLen,stdWordLen ,avgWordCount, stdWordCount = (56.257, 57.566, 7.79, 8.369)
-for item in resdfInit.iterrows():
-  resume={}
-  resume["RESUME_PATH"]=item[1]["RESUME_PATH"]
-  rlines = item[1]['RESUME_TEXT'].splitlines()
-  parasDict={}
+rvsWord = stats.norm.rvs(loc=avgWordCount, scale=stdWordCount, size=(50))
+rvsHeader = stats.norm.rvs(loc=avgHeaderWords, scale=stdHeaderWords, size=(50))
+rvsWordLen = stats.norm.rvs(loc=avgWordLen, scale=stdWordLen, size=(50))
+rvsHeaderLen = stats.norm.rvs(loc=avgHeaderLen, scale=stdHeaderLen, size=(50))
+
+if False:
+  avgWordLen,stdWordLen ,avgWordCount, stdWordCount = GetAvgLineDetails(textSer=textSer, avgHeaderWords=avgHeaderWords, avgHeaderLen=stdHeaderLen)
+else:
+  avgWordLen,stdWordLen ,avgWordCount, stdWordCount = (56.257, 57.566, 7.79, 8.369)
+
+from collections import Counter
+
+MYDEBUG=True
+#Word Frequncy
+#Heads per line
+#Head List Order
+#Head new lines
+from nltk import word_tokenize
+def FindHeadersInSingleLine(line):
+  HeaderStack=[]
+  parasDict=[]
+  ParaLines=[]
+  m = re.findall(HeadSplitpattern,  line)
+  if len(m)>1:
+    witerator = iter(line.split())
+    for word in witerator:
+      if re.match(HeadSplitpattern, word, flags=re.IGNORECASE) and (not re.match(AntiHeadMatchpattern, word, flags=re.IGNORECASE)) :
+        if MYDEBUG:
+          print("FindHeadersInSingleLine::HeadSplitpattern {}".format(word))
+        if len(HeaderStack) >0:
+          lastHeader=HeaderStack.pop()
+        if len(ParaLines) >0:
+          if MYDEBUG:
+            print("FindHeadersInSingleLine::ParaLines {}".format(ParaLines))
+          parasDict.append({ lastHeader : " ".join(ParaLines)})
+          lastHeader=""
+          ParaLines=[]
+        HeaderStack.append(word )
+      elif len(HeaderStack) >0:
+        ParaLines.append( word )
+        if MYDEBUG:
+          print("FindHeadersInSingleLine::ParaLines.append {}".format(word))
+    if len(HeaderStack) >0 :
+      ParaLines.append( word )
+      lastHeader=HeaderStack.pop()
+      parasDict.append({ lastHeader : " ".join(ParaLines)})
+
+  if len(parasDict) >0:
+    return  parasDict
+  else:
+    return None
+
+def SplitHeader(hline):
+    header = re.split(r':|:-|:--|\n|\t',hline)
+    return header[0], " ".join(header[1:])
+    
+    
+res1 = resdfInit['RESUME_TEXT'].loc[18]
+print(res1)
+
+resume=[]
+for item in resdfInit.loc[:18].iterrows():
+  rtxt = item[1]['RESUME_TEXT']
+  rlines = rtxt.splitlines()
+  resDict={
+      "RESUME_PATH" : item[1]["RESUME_PATH"],
+      "TEXT": item[1]['RESUME_TEXT'],
+      'RESUME_TYPE' : item[1][ 'RESUME_TYPE' ]
+         }
+  parasDict=[]
   ##Extract TOP
+  AllHeadersList=[]
+  HeaderStack=[]
+  ParaLines=[]
   for line in rlines:
     isHeader=0
     isMatch=0
     para=""
     line=line.strip()
-    if re.match(HeadSplitpattern, line, flags=re.IGNORECASE):
-      splArr = re.split(HeadSplitpattern, line, flags=re.IGNORECASE)
-      isHeader=5
-      if not splArr is None:
-        if splArr[0]=="":
-          pass
-        if not splArr[2].strip()=="":
-           print("=========================")
-           print(splArr[1])
-           print(splArr[2])
-           print("=========================")
-    else:
-      isHeader += HeaderStats(line, avgWordCount, rvsWord, rvsHeader, rvsWordLen, rvsHeaderLen)
-      if MatchRegExp(text=line, cregs=hregall)>0:
+    ParaLinesw = FindHeadersInSingleLine(line)
+    if MYDEBUG:
+        print(" ParaLinesw  {} ".format(ParaLinesw))
+    if not (ParaLinesw is None):
+      parasDict.extend(ParaLinesw)
+      continue
+  
+    isHeader += HeaderStats(line, avgWordCount, rvsWord, rvsHeader, rvsWordLen, rvsHeaderLen)
+    print("")
+    print("============Stats==isHeader={}".format(isHeader))
+    if MatchRegExp(text=line, cregs=hregall)>0:
         #most probablity this is an header line
-        isHeader+=2
-        isMatch=1
+        lheader, restofLine = SplitHeader(line)
+        if not re.match(AntiHeadMatchpattern, lheader, flags=re.IGNORECASE):
+            isHeader+=2
+            isMatch=1
         #print("is in header list :{}   {}".format(line, isHeader))
-      if isHeader>=3 and isMatch:
+    if isHeader>=3 and isMatch:
          #print("This is header :{}".format(line))
          if len(HeaderStack) >0:
            lastHeader=HeaderStack.pop()
          if len(ParaLines) >0:
-           Para.append( { lastHeader: " ".join(ParaLines)} )
+           parasDict.append( {lastHeader : " ".join(ParaLines)})
+           AllHeadersList.append(lastHeader)
            lastHeader=""
            ParaLines=[]
-         HeaderStack.append(line)
-         if False:
-           print("")
+         
+         lheader, restofLine = SplitHeader(line)
+         HeaderStack.append(lheader)
+         ParaLines.append(restofLine)
+         if MYDEBUG:
            print("")
            print("==============isHeader={}".format(isHeader))
            print(line)
            print("============================")
-      elif isHeader>2:
-        if False:
-          print("")
+    elif isHeader>2:
+        if MYDEBUG:
           print("")
           print("===== Sub Header==============isHeader={}".format(isHeader))
           print(line)
           print("============================")
           print("")
-      else:
+    else:
         if len(HeaderStack) >0:
-           ParaLines.append(line)
+          ParaLines.append(line)
 
+  if len(HeaderStack) >0:
+    lastHeader=HeaderStack.pop()
+  if len(ParaLines) >0:
+    parasDict.append( { lastHeader : " ".join(ParaLines)})
+    #parasDict.append( { lastHeader: " ".join(ParaLines)} )
+    lastHeader=""
+    ParaLines=[]
 
+  wordcount = Counter(word_tokenize(rtxt))
+  #resDict["Headers"]="{}".format(parasDict)
+  #resDict["HeadersList"]="{}".format(AllHeadersList)
+  #resDict["Wordcount"]="{}".format(wordcount)
+  resDict["Headers"] = parasDict
+  resDict["HeadersList"] = AllHeadersList
+  resDict["Wordcount"] =  wordcount
 
+  resume.append(resDict)
 
+resumeDF = pd.DataFrame(resume)
+
+list(resdfInit.columns)
 

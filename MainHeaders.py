@@ -4,8 +4,19 @@ Created on Fri May 18 20:50:17 2018
 
 @author: anandrathi
 """
+
+def getAntiHeaders():
+    ANTI_HEADER= [
+        "Programmer Analyst",
+        ]
+    return ANTI_HEADER
+
 def getMainHeaders():
   MAINHEADERS = [
+  "Technical & Analytical skill-set",        
+  "skype"
+  "E-mail",
+  "E-mail   id",
   "it exposure",
   "technologies hired",
   "projects perfected",
@@ -52,7 +63,6 @@ def getMainHeaders():
   "skills / abilities",
   "skills in various",
   "technologies skills",
-  "email configuration",
   "area of interests",
   "academic acheivement",
   "skills and knowledge acquired through experience & training",
@@ -291,7 +301,7 @@ def getMainHeaders():
   "knowledge & skills",
   "trainings delivered",
   "training & project",
-  "date",
+#  "date",
   "language & tools",
   "qualification level",
   "objective profile",
@@ -1290,7 +1300,6 @@ def getMainHeaders():
   "professional credentials",
   "job profile",
   "final year project",
-  "email testing tool",
   "personal strenght",
   "email          id",
   "project profile",
@@ -1423,7 +1432,6 @@ def getMainHeaders():
   "personal computer",
   "tools",
   "overview of spinning",
-  "emailer development",
   "excellence quality",
   "technologies worked",
   "personal memorandum",
@@ -1606,6 +1614,8 @@ def getMainHeaders():
   "project summary",
   "declairation",
   "technical skill set",
-  "key skills gained"
+  "key skills gained",
+  "mobile",
+  "Mob"
   ]
   return MAINHEADERS
