@@ -16,7 +16,6 @@ xpath = "C:/temp/DataScience/Aleep/"
 nltk.set_proxy('http://he159490:Monday07@proxyserver.health.wa.gov.au:8181', ('he159490', 'Monday07'))
 nltk.download('punkt')
 
-MainHeaders.getMainHeaders()
 
 EMAIL_PATTERN = r'[\w\.-]+@[\w\.-]+'
 NO_NAME = set(["phone","resume", "vitae" , "of", "curriculum", "curriculam"," carriculum", "curriculum-vitae",
@@ -39,6 +38,12 @@ list(resdfInit.columns)
 resdfInit.head(1).index
 
 
+##################################################################
+###################### empty Resume ############################
+##################################################################
+EmpryResumeJSON = None
+with open(xpath + "RESUME_JSON_EMPTY.json") as RM:
+    EmpryResumeJSON =  json.load( RM )
 
 
 def GetHeadingsSets():
@@ -162,16 +167,16 @@ avgHeaderWords = np.mean([ len(head.split()) for  head in oldHeaders if len(head
 stdHeaderWords = np.std([ len(head.split()) for  head in oldHeaders if len(head.strip())>0 ])
 
 AllresumesPara=[]
-avgWordLen,stdWordLen ,avgWordCount, stdWordCount = (56.257, 57.566, 7.79, 8.369)
-rvsWord = stats.norm.rvs(loc=avgWordCount, scale=stdWordCount, size=(50))
-rvsHeader = stats.norm.rvs(loc=avgHeaderWords, scale=stdHeaderWords, size=(50))
-rvsWordLen = stats.norm.rvs(loc=avgWordLen, scale=stdWordLen, size=(50))
-rvsHeaderLen = stats.norm.rvs(loc=avgHeaderLen, scale=stdHeaderLen, size=(50))
 
 if False:
   avgWordLen,stdWordLen ,avgWordCount, stdWordCount = GetAvgLineDetails(textSer=textSer, avgHeaderWords=avgHeaderWords, avgHeaderLen=stdHeaderLen)
 else:
   avgWordLen,stdWordLen ,avgWordCount, stdWordCount = (56.257, 57.566, 7.79, 8.369)
+
+rvsWord = stats.norm.rvs(loc=avgWordCount, scale=stdWordCount, size=(50))
+rvsHeader = stats.norm.rvs(loc=avgHeaderWords, scale=stdHeaderWords, size=(50))
+rvsWordLen = stats.norm.rvs(loc=avgWordLen, scale=stdWordLen, size=(50))
+rvsHeaderLen = stats.norm.rvs(loc=avgHeaderLen, scale=stdHeaderLen, size=(50))
 
 from collections import Counter
 
