@@ -10,9 +10,9 @@ import numpy as np
 import json
 import nltk
 import MainHeaders
- 
+
 xpath = "D:/Users/anandrathi/Documents/personal/Bussiness/Aleep/"
-xpath = "C:/temp/DataScience/Aleep/"
+#xpath = "C:/temp/DataScience/Aleep/"
 nltk.set_proxy('http://he159490:Monday07@proxyserver.health.wa.gov.au:8181', ('he159490', 'Monday07'))
 nltk.download('punkt')
 
@@ -221,12 +221,46 @@ def FindHeadersInSingleLine(line):
     return None
 
 def SplitHeader(hline):
-    header = re.split(r':|:-|:--|\n|\t',hline)
-    return header[0], " ".join(header[1:])
-    
-    
+  header = re.split(r':|:-|:--|\n|\t',hline)
+  return header[0], " ".join(header[1:])
+
+
 res1 = resdfInit['RESUME_TEXT'].loc[18]
 print(res1)
+
+import ResumeMapper
+revHash = ResumeMapper.getRevKeyHash(xpath)
+ORes = ResumeMapper.GetEmptyRes()
+def FillResume(resDict, revHash, ORes):
+  for hi in resDict["Headers"]:
+    for h,d in hi.items():
+      for k,v in revHash.items():
+        if not re.search(k,h, re.IGNORECASE) is None: # FOUND!!
+          v = v.replace("'", '').replace('[', '').replace(']', '')
+          v = v.split(",")
+          tORes=ORes
+          print("FillResume found HEADER {}" .format(h) )
+          print("FillResume found HEADER {}" .format(v) )
+          for vi in v:
+            if isinstance(tORes,list):
+              tORes= tORes[0]
+            if isinstance(tORes,dict):
+              if vi in tORes: # FOUND!!
+                if isinstance(tORes[vi],str):
+                  tORes[vi]=d
+                else:
+                   tORes=tORes[vi]
+              else:
+                tORes[vi]={}
+                tORes=tORes[vi]
+          if isinstance(tORes,dict):
+            tORes[vi]=d
+          else:
+            ORes[vi]=d
+
+  return ORes
+
+
 
 resume=[]
 for item in resdfInit.loc[:18].iterrows():
@@ -253,7 +287,7 @@ for item in resdfInit.loc[:18].iterrows():
     if not (ParaLinesw is None):
       parasDict.extend(ParaLinesw)
       continue
-  
+
     isHeader += HeaderStats(line, avgWordCount, rvsWord, rvsHeader, rvsWordLen, rvsHeaderLen)
     print("")
     print("============Stats==isHeader={}".format(isHeader))
@@ -273,7 +307,7 @@ for item in resdfInit.loc[:18].iterrows():
            AllHeadersList.append(lastHeader)
            lastHeader=""
            ParaLines=[]
-         
+
          lheader, restofLine = SplitHeader(line)
          HeaderStack.append(lheader)
          ParaLines.append(restofLine)
@@ -309,9 +343,12 @@ for item in resdfInit.loc[:18].iterrows():
   resDict["HeadersList"] = AllHeadersList
   resDict["Wordcount"] =  wordcount
 
+  ORes = GetEmptyRes()
+  OResfill =  FillResume(resDict=resDict, revHash=revHash, ORes=ORes)
+  resDict["OResfill"] =  OResfill
+
   resume.append(resDict)
 
 resumeDF = pd.DataFrame(resume)
 
 list(resdfInit.columns)
-
