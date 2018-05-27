@@ -26,25 +26,36 @@
     "work experience": 
       {
        "project": ["Projects","Project name", "PROJECT NAME", "Project Name","PRECEEDING ASSIGNMENTS","Key Project Handled", "PROJECT EXPERIENCE HIGHLIGHTS","PROJECT PROFILE", "Project Profile","Project", "PROJECT 06", "Project Location", "projects & Workshops", "Project Abstract", "Project", "Project # ", "Project Profile 1", "Key Project Handled", "Project", "Project Overview", "Project Management", "Project ", "PROJECT", "Projects Details", "Project Summary", "PROJECT DETAILS", "Project Details", "ProjectTitle", "PROJECT", "Project Coordination", "Projects undertaken", "projects & Workshops", "PROJECT", "Project name", "Project Objective", "PROJECT-",  "Project#", "Project", "Project detail", "Project Undertaken", "PROJECT ", "Project Duration", "Project client", "Project ", "Project Profile", "PROJECTS PROFILE", "PROJECTS SUMMARY", "Project", "Project#", "Project # 4", "Project#3", "Project & People Management", "Project", "Project Worked on", "Project Domain", "Project#1", "Project", "PROJECT", "Project Responsibilities", "Project#1 (final semester project )", "Project Title", "Project", "Projects", "Project", "Project", "PROJECT", "Project Description", "Project Link", "PROJECT NAME", "Project Profile ", "Projects Handled", "Project", "Project description", "PROJECT ", "Project Name", "PROJECT 04", "PROJECT","Product Handled"],
+	   
 	  "experience": ["EMPLOYMENT DETAILS","PREVIOUSLY WORKED","Previous Work Experience","WORK & EXPERIANCE","ORGANISATIONAL EXPERIENCE","HARDWARE & NETWORKING EXPERIENCE","PROJECT RESPOSIBILITIES","Professional Qualification","Overall Experience","Total Professional Experience","Project and Work Responsibilities", "SOFTWARE PROJECTS", "Past Work History &  Experience", "KEY PROJECTS","PROFESSIONAL SYNOPSIS","Professional Attainments", "Organizational Experience", "ORGANIZATIONAL EXPERIENCE", "ORGANISATIONAL EXPERIENCE", "Organisational Experience", "Employment Chronicle", "KEY PROJECTS HANDLED", "Onsite Exposure", "TECHNICAL PROFILE", "Professional Experience & Details", "Areas of Expertise","PROJECT WORK","KEY PROJECTS UNDERTAKEN","ORGANISATIONAL SCAN","EMPLOYMENT HISTORY","ORGANIZATIONAL SCAN","Professional Digest","Employment History","PROFESSIONAL HISTORY","Project Experience","CAREER HISTORY","Last Experience","Profile & Experience Summary","HANDLED PROJECTS","PROJECT WORKED","Experience chronology","Current Projects","Current Organization Details","PROJECTS UNDERTAKEN","Executive Profile","Current Employer","Projects", "Projects Handled", "PROJECTS", "PROJECTS DETAILS","PROJECT DETAILS", "Projects Details", "Projects Worked On", "PROJECTS HANDLED", "Projects Undertaken","ONSITE EXPERIENCE","PROJECTS PROFILE","EXPERIENCE SUMMARY", "EXPERIENCE DETAILS", "EXPERIENCE", "Experience", "Experiences", "Experience Summary", "Experience SUMMARY", "Experience Snapshot","WORKING EXPERIENCE", "Working Experience","Job Experience","WORK EXPERINCE", "WORKING EXPERIENCE WITH",  "WORK AREAS", "WORK HISTORY", "WORK & EXPERIANCE", "WORK PROFILE","EMPLOYMENT EXPERIENCE", "Work Experience & Professional Experience","PROFESSIONAL EXPERIENCE", "Work history", "WORK EXPERIENCE", "Work History", "Work Experience", "Work Experience Details","Total Work Experience", "TOTAL WORK EXPERIENCE"],
 	  
-     "organization":["Organisation","Organisation", "ORGANISATION","Employers name","Name of the Company","Employer","Work History", "Employer and Role Details", "Employers name", "Organization name","Earlier Organization", "Organization", "Organization and Culture Change", "ORGANIZATION", "Organizational Experience", "Organization Name","ORGANISATION","COMPANY PROFILE", "Company Industry", "COMPANY NAME", "Company Name", "Company", "Company Duties", "Company Profile", "Company Role Designation", "Company name"],
+     "organization":["Organisation","Organisation", "ORGANISATION","Employers name","Name of the Company","Employer","Work History", "Employer and Role Details", "Employers name", "Organization name","Earlier Organization", "Organization", "Organization and Culture Change", "ORGANIZATION", "Organizational Experience", "Organization Name","ORGANISATION","COMPANY PROFILE", "Company Industry", "COMPANY NAME", "Company Name", "Company", "Company Duties", "Company Profile", "Company Role Designation", "Company name","Current Employer", "Current Company", "Current Organization Details", "Current Organization"],
      
      "location": ["Location","location","Work Locations","LOCATION"],
+	 
      "description": ["SHORT DESCRIPTION","DESCRIPTION", "Description & Responsibilities", "Description", "Descriptions","Job description", "Job Description"],
-	 "roles": ["TITLE", "Designation", "Designation& Role", "Title/Designation", "designation", 			"DESIGNATION","Present Organization", "Position Held", "position", "Position","Joined as", "Company Role Designation"],
-      "highlights":["Development Tools","Tool Data","Integration Tool","Technology Used","TECHNOLOGY","Tools & Technology","TOOLS/PLATFORM","TOOLS USING","Technologies Used", 
-          "Technologies/Tools Used","Technologies used","Solution Environment","Software Used","OS Platform","Operating System", "Technologies","Environments", "Environment and Tools", "Environment/Technology",
-                            "Software Tools", "Environment","Tool Knowledge","Tools"],
+	 
+
+	 "roles": ["TITLE", "Designation", "Designation& Role", "Title/Designation", "designation", 			"DESIGNATION","Present Organization", "Position Held", "position", "Position","Joined as", "Company Role Designation", "Job Type"],
+	 
+      "highlights":["Development Tools","Tool Data","Integration Tool","Technology Used","TECHNOLOGY","Tools & Technology","TOOLS/PLATFORM","TOOLS USING","Technologies Used",           "Technologies/Tools Used","Technologies used","Solution Environment","Software Used","OS Platform","Operating System", "Technologies","Environments", "Environment and Tools", "Environment/Technology", "Software Tools", "Environment","Tool Knowledge","Tools", "Significant Highlights","Project Coordination","Project & People Management"],
+							
         "url": "Information Links",
+
         "duration":["Duration", "DURATION", "Duration of work", "Duration and Status", "Duration(Months)","Time Period","Period", "PERIOD"],
+
         "startDate":[ "Joined on","from", "From","Appear Date","Date started","Joined","Start Date"],
-        "endDate":[ "To","TO","Date ended","End Date"],
+
+		"endDate":["CURRENTLY WORKING","Currently Working","Employment Date","Major Project", "To","TO","Date ended","End Date"],
+		
         "teamsize":["Team size", "Team Size", "TEAM SIZE","Team Strength"],
+
         "summary": ["skills","Back-end technique","Skill Area","Script / Language","Languages","Languages Used","Technical Platform","Areas of Expertise","Skill Used", "SKILL SET", "Skills set", "SKILLS", "Skill Set", "Skills Used", "Skills & Tools", "Skills", "Skill Area","SUMMARY OF EXPERIENCE","About the Project","Sub-Domain","Business details of the client and project","Work Summary", "KEY ACCOUNTABILITIES","Experience","Domain", "Domain Knowledge", "Domain â€“ SupplyChain", "Experience(Month)", "Key Contributions", "Key Deliverables", "Key Responsibility","Key Responsibilities","Brief Description", "Key Projects Handled", "Key Business Deliverables", "Key Result Areas", "Experience SUMMARY", "EXPERIENCE","Executive Summary","Professional Summary","PROFESSIONAL SUMMARY","PROJECT SUMMARY","JOB PROFILE", "CAREER SUMMARY","PROJECT HIGHLIGHTS","Career Summary", "Career summary"],
+		
         "roles":["RESPONSIBILITIES","Job Role and Responsibilities","BI Skills Used/Responsibilities","Roles and Activities", "Contribution in Project","Company Duties", "Responsibilities Handled", "Responsibilities",  "Responsibilities and Duties", "Responsibilities/Feature","Responsibility","ROLE","Duties","Roles And Responsibilities", "Roles", "Role & Responsibilities",  "Roles & Responsibility", "ROLE& RESPONSIBILITIES", "Role/Responsibility", "Roles and Responsibilities in the Project", "Roles and Activities", "Roles & Responsibilities", "Role", "Roles and Responsibilities", "Roles Performed","Significant Achievements", "Contribution", "Contribution in Project", "ROLES AND RESPONSIBILITIES", "Roles&Responsibility", "Roles and responsibilities","Work Achievements", "Roles and Responsibility", "ROLE", "Role and Responsibilities","Technical Responsibilities","Job Responsibilities","JOB RESPONSIBILITIES"],
-        "highlights":[ "Significant Highlights","Project Coordination","Project & People Management"]
-          
+		
+        "keywords": [ "Program Languages","KEY ACCOUNTABILITIES" ]
+		
       },
     "volunteer": {
         "organization": "volunteer organization",
@@ -125,24 +136,5 @@
       {
         "reference": "reference"
       } ,
-    "projects": 
-      {
-        "description": ["Project Description", "Project description","Project Objective","Descriptions","Project Overview"],
-        "highlights": [ "Highlights of Achievement", "achievement"],
-        "keywords": [ "Program Languages","KEY ACCOUNTABILITIES" ],
-        "startDate": ["Joined"],
-        "endDate":["CURRENTLY WORKING","Currently Working","Employment Date","Major Project","Current Projects",
-           "Current Projects", "Current project", "Current Designation"], 
-        "url": "Project Link",
-        "responsibilities":["RESPONSIBILITIES","Roles and Responsibilities in the Project",
-           "Responsibilities Handled", "Responsibilities",  "Responsibilities and Duties","Project Description",
-            "Project description","Responsibilities/Feature","Responsibility","ROLE","Duties","Roles And Responsibilities", 
-            "Roles", "Role & Responsibilities", "Roles & Responsibility", "ROLE& RESPONSIBILITIES", "Role/Responsibility",
-             "Roles and Responsibilities in the Project", "Roles and Activities", "Roles & Responsibilities", "Role",
-              "Roles and Responsibilities", "Roles Performed", "ROLES AND RESPONSIBILITIES", "Roles&Responsibility", 
-              "Roles and responsibilities", "Roles and Responsibility", "ROLE", "Role and Responsibilities"],
-        "entity": ["Current Employer", "Current Company", "Current Organization Details", "Current Organization"],
-        "type": "Job Type"
-      } ,
     "others":["DECLARATION","CAREER SNAPSHOT","Document Types and other Deliverables"]
-  }
+}

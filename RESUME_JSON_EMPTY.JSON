@@ -19,27 +19,36 @@
         "network": "",
         "username": "",
         "url": ""
-      },
-      {
-        "network": "",
-        "username": "",
-        "url": ""
       }
     ]
   },
+  "workexperience": [
+    {
+      "project": ""
+    }
+  ],
   "work experience": [
     {
+	  "experience":"", 
       "organization": "",
       "location": "",
+	  "project":"",
+      "client": "",
+      "roles": "",
       "description": "",
       "position": "",
       "url": "",
       "startDate": "",
       "endDate": "",
       "summary": "",
-      "highlights": [ ]
+      "highlights": "",
+      "duration": "",
+      "teamsize":"",
+      "keywords": ""
     }
-  ],
+	
+    ],
+
   "volunteer": [
     {
       "organization": "",
@@ -50,12 +59,12 @@
       "startDate": "",
       "endDate": "",
       "summary": "",
-      "highlights": [ ]
-      
+      "highlights": ""
     }
   ],
   "education": [
     {
+	  "education":"",
       "institution": "",
       "area": "",
       "studyType": "Bachelor",
@@ -82,18 +91,13 @@
       "summary": ""
     }
   ],
-  "skills": [
+  "skills": 
     {
       "name": "",
       "level": "",
-      "keywords": [ ]
-    },
-    {
-      "name": "",
-      "level": "",
-      "keywords": []
+      "keywords": ""
     }
-  ],
+  ,
   "languages": [  {"language": "English", 
 				   "fluency": "Intermediate" }
 				],
@@ -107,20 +111,6 @@
     {
       "name": "",
       "reference": ""
-    }
-  ],
-  "projects": [
-    {
-      "name": "",
-      "description": "",
-      "highlights": [  "", "", "" ],
-      "keywords": [ ],
-      "startDate": "",
-      "endDate": "",
-      "url": "",
-      "roles": [   ],
-      "entity": "",
-      "type": ""
     }
   ],
   "meta": {

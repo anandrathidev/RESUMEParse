@@ -20,7 +20,7 @@ import MainHeaders
 
 xpath = "D:/Users/anandrathi/Documents/personal/Bussiness/Aleep/"
 #xpath = "C:/temp/DataScience/Aleep/"
-nltk.set_proxy('http://he159490:Monday07@proxyserver.health.wa.gov.au:8181', ('he159490', 'Monday07'))
+
 nltk.download('punkt')
 
 
@@ -50,8 +50,10 @@ resdfInit.head(1).index
 ##################################################################
 EmpryResumeJSON = None
 with open(xpath + "RESUME_JSON_EMPTY.json") as RM:
+  try:
     EmpryResumeJSON =  json.load( RM )
-
+  except Exception as e:
+    print(" load ResumeJSON {} ".format(e))
 
 def GetHeadingsSets():
   from itertools import chain
@@ -240,139 +242,9 @@ revHash = ResumeMapper.getRevKeyHash(xpath=xpath)
 #ORes = ResumeMapper.GetEmptyRes(xpath=xpath)
 #print("Init ORes = {} ".format(ORes))
 
-def fillSkills(v, ORes, d):
-  MT ="skills"
-  wede = {
-      "level": "",
-      "keywords": [ ]
-  }
-  if not MT in ORes[MT]:
-    ORes[MT]=wede
-  if ORes[MT] is None:
-    ORes[MT]=wede
+import FillResume
 
-  wed =  ORes[MT]
-    if len(wed[v[1]].strip() )==0:
-      wed[v[1]]=d
-    else:
-      ORes[MT].append(wede)
-      wed =  ORes[MT][-1]
-      wed[v[1]]=d
-
-  if v[1] == "level":
-    if len(wed[v[1]].strip() )==0:
-      wed[v[1]]=d
-    else:
-      ORes[MT].append(wede)
-      wed =  ORes[MT][-1]
-      wed[v[1]]=d
-
-  if v[1] == "keywords":
-    if len(wed[v[1]])==0:
-      wed[v[1]]=[]
-      wed[v[1]].append(d)
-    else:
-      ORes[MT].append(wede)
-      wed =  ORes[MT][-1]
-      wed[v[1]]=d
-
-def fillEdu(v, ORes, d):
-  MT ="education"
-  wede = {
-    "institution": "",
-    "area": "",
-    "studyType": "",
-    "startDate": "",
-    "endDate": "",
-    "gpa": "",
-    "courses": []
-  }
-  if len(ORes[MT]) == 0:
-    ORes[MT]=[]
-    ORes[MT].append(wede)
-
-  wed =  ORes[MT][-1]
-    if len(wed[v[1]].strip() )==0:
-      wed[v[1]]=d
-    else:
-      ORes[MT].append(wede)
-      wed =  ORes[MT][-1]
-      wed[v[1]]=d
-
-  if v[1] == "institution" or
-  v[1] == "location" or
-  v[1] == "description" or
-  v[1] == "position" or
-  v[1] == "url" or
-  v[1] == "startDate" or
-  v[1] == "endDate" or
-  v[1] == "summary":
-    if len(wed[v[1]].strip() )==0:
-      wed[v[1]]=d
-    else:
-      ORes[MT].append(wede)
-      wed =  ORes[MT][-1]
-      wed[v[1]]=d
-
-  if v[1] == "courses":
-    if len(wed[v[1]])==0:
-      wed[v[1]]=[]
-      wed[v[1]].append(d)
-    else:
-      ORes[MT].append(wede)
-      wed =  ORes[MT][-1]
-      wed[v[1]]=d
-
-def fillWorkExp(v, ORes, d):
-  MT ="work experience"
-  wede = {
-    "organization": "",
-    "location": "",
-    "description": "",
-    "position": "",
-    "url": "",
-    "startDate": "",
-    "endDate": "",
-    "summary": "",
-    "highlights": [ ]
-  }
-  if len(ORes[MT]) == 0:
-    ORes[MT]=[]
-    ORes[MT].append(wede)
-
-  wed =  ORes[MT][-1]
-  if v[1] == "organization":
-    if len(wed[v[1]].strip() )==0:
-      wed[v[1]]=d
-    else:
-      ORes[MT].append(wede)
-      wed =  ORes[MT][-1]
-      wed[v[1]]=d
-
-  if v[1] == "location" or
-  v[1] == "description" or
-  v[1] == "position" or
-  v[1] == "url" or
-  v[1] == "startDate" or
-  v[1] == "endDate" or
-  v[1] == "summary":
-    if len(wed[v[1]].strip() )==0:
-      wed[v[1]]=d
-    else:
-      ORes[MT].append(wede)
-      wed =  ORes[MT][-1]
-      wed[v[1]]=d
-
-  if v[1] == "highlights":
-    if len(wed[v[1]])==0:
-      wed[v[1]]=[]
-      wed[v[1]].append(d)
-    else:
-      ORes[MT].append(wede)
-      wed =  ORes[MT][-1]
-      wed[v[1]]=d
-
-def FillResume(resDict, revHash, ORes):
+def FFillResume(resDict, revHash, ORes):
   ORes["profiles"]=[]
   ORes["work experience"]=[]
   ORes["references"]=[]
@@ -380,7 +252,6 @@ def FillResume(resDict, revHash, ORes):
   ORes["education"]=[]
   ORes["awards"]=[]
   ORes["publications"]=[]
-  ORes["skills"]=[]
   ORes["languages"]=[]
   ORes["references"]=[]
 
@@ -400,57 +271,37 @@ def FillResume(resDict, revHash, ORes):
           #print("FillResume FOUND HEADER {} HASH {}" .format(h, v) )
           lastvi=None
           if v[0] == "basics":
-            if v[1] == "name":
-              ORes[v[0]][v[1]] = d
-            if v[1] == "label":
-              ORes[v[0]][v[1]] = d
-            if v[1] == "image":
-              ORes[v[0]][v[1]] = d
-            if v[1] == "email":
-              ORes[v[0]][v[1]] = d
-            if v[1] == "phone":
-              ORes[v[0]][v[1]] = d
-            if v[1] == "url":
-              ORes[v[0]][v[1]] = d
-            if v[1] == "summary":
-              ORes["basics"]["summary"] = d
-              ORes[v[0]][v[1]] = d
-
-            if v[1] == "location":
-              if v[2] == "address":
-                ORes[v[0]][v[1]][v[2]] = d
-              if v[2] == "postalCode":
-                ORes[v[0]][v[1]][v[2]] = d
-              if v[2] == "city":
-                ORes[v[0]][v[1]][v[2]] = d
-              if v[2] == "region":
-                ORes[v[0]][v[1]][v[2]] = d
-              if v[2] == "countryCode":
-                ORes["basics"]["location"][v[2]] = d
+            FillResume.fillBasic(v, ORes, d)
           if v[0] == "profiles":
               ORes["profiles"].append( {"url" : d })
 
               ORes["profiles"].append( {"url" : d })
 
           if v[0] == "work experience":
-            fillWorkExp(v, ORes, d)
+            FillResume.fillWorkExp(v, ORes, d)
 
           if v[0] == "volunteer":
             #fillWorkExp(v, ORes, d)
+            pass
           if v[0] == "education":
-            fillEdu(v, ORes, d)
+            FillResume.fillEdu(v, ORes, d)
           if v[0] == "awards":
             #fillWorkExp(v, ORes, d)
+            pass
           if v[0] == "publications":
-            fillWorkExp(v, ORes, d)
+            #fillWorkExp(v, ORes, d)
+            pass
           if v[0] == "skills":
-            fillSkills(v, ORes, d)
+            FillResume.fillSkills(v, ORes, d)
           if v[0] == "languages":
-            fillWorkExp(v, ORes, d)
+            #fillWorkExp(v, ORes, d)
+            pass
           if v[0] == "interests":
-            fillWorkExp(v, ORes, d)
+            #fillWorkExp(v, ORes, d)
+            pass
           if v[0] == "references":
-            fillWorkExp(v, ORes, d)
+            #fillWorkExp(v, ORes, d)
+            pass
 
           break
 
@@ -498,7 +349,9 @@ for item in resdfInit.loc[:8].iterrows():
          if len(HeaderStack) >0:
            lastHeader=HeaderStack.pop()
          if len(ParaLines) >0:
-           parasDict.append( {lastHeader : " ".join(ParaLines)})
+           parajoin = " ".join(ParaLines).strip()
+           if(len(parajoin)>0):
+             parasDict.append( {lastHeader : " ".join(ParaLines)})
            AllHeadersList.append(lastHeader)
            lastHeader=""
            ParaLines=[]
@@ -525,10 +378,12 @@ for item in resdfInit.loc[:8].iterrows():
   if len(HeaderStack) >0:
     lastHeader=HeaderStack.pop()
   if len(ParaLines) >0:
-    parasDict.append( { lastHeader : " ".join(ParaLines)})
-    #parasDict.append( { lastHeader: " ".join(ParaLines)} )
-    lastHeader=""
-    ParaLines=[]
+    parajoin = " ".join(ParaLines).strip()
+    if(len(parajoin))>0:
+      parasDict.append( {lastHeader : " ".join(ParaLines)})
+      #parasDict.append( { lastHeader: " ".join(ParaLines)} )
+      lastHeader=""
+      ParaLines=[]
 
   wordcount = Counter(word_tokenize(rtxt))
   #resDict["Headers"]="{}".format(parasDict)
@@ -539,7 +394,7 @@ for item in resdfInit.loc[:8].iterrows():
   resDict["Wordcount"] =  wordcount
 
   ORes = ResumeMapper.GetEmptyRes(xpath=xpath)
-  OResfill =  FillResume(resDict=resDict, revHash=revHash, ORes=ORes)
+  OResfill =  FFillResume(resDict=resDict, revHash=revHash, ORes=ORes)
   resDict["OResfill"] =  OResfill
 
   resume.append(resDict)

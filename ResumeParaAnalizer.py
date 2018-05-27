@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Sat May 26 18:08:00 2018
+
+@author: anandrathi
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Sun May 13 22:14:40 2018
 
 @author: anandrathi
@@ -13,7 +20,7 @@ import MainHeaders
 
 xpath = "D:/Users/anandrathi/Documents/personal/Bussiness/Aleep/"
 #xpath = "C:/temp/DataScience/Aleep/"
-nltk.set_proxy('http://he159490:Monday07@proxyserver.health.wa.gov.au:8181', ('he159490', 'Monday07'))
+
 nltk.download('punkt')
 
 
@@ -43,8 +50,10 @@ resdfInit.head(1).index
 ##################################################################
 EmpryResumeJSON = None
 with open(xpath + "RESUME_JSON_EMPTY.json") as RM:
+  try:
     EmpryResumeJSON =  json.load( RM )
-
+  except Exception as e:
+    print(" load ResumeJSON {} ".format(e))
 
 def GetHeadingsSets():
   from itertools import chain
@@ -180,7 +189,7 @@ rvsHeaderLen = stats.norm.rvs(loc=avgHeaderLen, scale=stdHeaderLen, size=(50))
 
 from collections import Counter
 
-MYDEBUG=True
+MYDEBUG=False
 #Word Frequncy
 #Heads per line
 #Head List Order
@@ -226,44 +235,80 @@ def SplitHeader(hline):
 
 
 res1 = resdfInit['RESUME_TEXT'].loc[18]
-print(res1)
+#print(res1)
 
 import ResumeMapper
-revHash = ResumeMapper.getRevKeyHash(xpath)
-ORes = ResumeMapper.GetEmptyRes()
-def FillResume(resDict, revHash, ORes):
+revHash = ResumeMapper.getRevKeyHash(xpath=xpath)
+#ORes = ResumeMapper.GetEmptyRes(xpath=xpath)
+#print("Init ORes = {} ".format(ORes))
+
+import FillResume
+
+def FFillResume(resDict, revHash, ORes):
+  ORes["profiles"]=[]
+  ORes["work experience"]=[]
+  ORes["references"]=[]
+  ORes["volunteer"]=[]
+  ORes["education"]=[]
+  ORes["awards"]=[]
+  ORes["publications"]=[]
+  ORes["languages"]=[]
+  ORes["references"]=[]
+
   for hi in resDict["Headers"]:
     for h,d in hi.items():
       for k,v in revHash.items():
-        if not re.search(k,h, re.IGNORECASE) is None: # FOUND!!
+        #print("FillResume SEARCH HEADER {} HASH {}" .format(h, k) )
+        k=k.strip()
+        h=h.strip()
+        sr = re.fullmatch(k,h, re.IGNORECASE)
+        if not sr is None: # FOUND!!
+          print("=================================")
           v = v.replace("'", '').replace('[', '').replace(']', '')
-          v = v.split(",")
+          v =  [  vs.strip()  for vs in v.split(",") ]
           tORes=ORes
-          print("FillResume found HEADER {}" .format(h) )
-          print("FillResume found HEADER {}" .format(v) )
-          for vi in v:
-            if isinstance(tORes,list):
-              tORes= tORes[0]
-            if isinstance(tORes,dict):
-              if vi in tORes: # FOUND!!
-                if isinstance(tORes[vi],str):
-                  tORes[vi]=d
-                else:
-                   tORes=tORes[vi]
-              else:
-                tORes[vi]={}
-                tORes=tORes[vi]
-          if isinstance(tORes,dict):
-            tORes[vi]=d
-          else:
-            ORes[vi]=d
+          print("FillResume SEARCH Result:{} pattern:{} hash:{} vec:{}" .format(sr, k, h, v) )
+          #print("FillResume FOUND HEADER {} HASH {}" .format(h, v) )
+          lastvi=None
+          if v[0] == "basics":
+            FillResume.fillBasic(v, ORes, d)
+          if v[0] == "profiles":
+              ORes["profiles"].append( {"url" : d })
+
+              ORes["profiles"].append( {"url" : d })
+
+          if v[0] == "work experience":
+            FillResume.fillWorkExp(v, ORes, d)
+
+          if v[0] == "volunteer":
+            #fillWorkExp(v, ORes, d)
+            pass
+          if v[0] == "education":
+            FillResume.fillEdu(v, ORes, d)
+          if v[0] == "awards":
+            #fillWorkExp(v, ORes, d)
+            pass
+          if v[0] == "publications":
+            #fillWorkExp(v, ORes, d)
+            pass
+          if v[0] == "skills":
+            FillResume.fillSkills(v, ORes, d)
+          if v[0] == "languages":
+            #fillWorkExp(v, ORes, d)
+            pass
+          if v[0] == "interests":
+            #fillWorkExp(v, ORes, d)
+            pass
+          if v[0] == "references":
+            #fillWorkExp(v, ORes, d)
+            pass
+
+          break
 
   return ORes
 
-
-
 resume=[]
-for item in resdfInit.loc[:18].iterrows():
+for item in resdfInit.loc[:8].iterrows():
   rtxt = item[1]['RESUME_TEXT']
   rlines = rtxt.splitlines()
   resDict={
@@ -283,14 +328,15 @@ for item in resdfInit.loc[:18].iterrows():
     line=line.strip()
     ParaLinesw = FindHeadersInSingleLine(line)
     if MYDEBUG:
-        print(" ParaLinesw  {} ".format(ParaLinesw))
+      print(" ParaLinesw  {} ".format(ParaLinesw))
     if not (ParaLinesw is None):
       parasDict.extend(ParaLinesw)
       continue
 
     isHeader += HeaderStats(line, avgWordCount, rvsWord, rvsHeader, rvsWordLen, rvsHeaderLen)
-    print("")
-    print("============Stats==isHeader={}".format(isHeader))
+    if MYDEBUG:
+      print("")
+      print("============Stats==isHeader={}".format(isHeader))
     if MatchRegExp(text=line, cregs=hregall)>0:
         #most probablity this is an header line
         lheader, restofLine = SplitHeader(line)
@@ -303,7 +349,9 @@ for item in resdfInit.loc[:18].iterrows():
          if len(HeaderStack) >0:
            lastHeader=HeaderStack.pop()
          if len(ParaLines) >0:
-           parasDict.append( {lastHeader : " ".join(ParaLines)})
+           parajoin = " ".join(ParaLines).strip()
+           if(len(parajoin)>0):
+             parasDict.append( {lastHeader : " ".join(ParaLines)})
            AllHeadersList.append(lastHeader)
            lastHeader=""
            ParaLines=[]
@@ -330,10 +378,12 @@ for item in resdfInit.loc[:18].iterrows():
   if len(HeaderStack) >0:
     lastHeader=HeaderStack.pop()
   if len(ParaLines) >0:
-    parasDict.append( { lastHeader : " ".join(ParaLines)})
-    #parasDict.append( { lastHeader: " ".join(ParaLines)} )
-    lastHeader=""
-    ParaLines=[]
+    parajoin = " ".join(ParaLines).strip()
+    if(len(parajoin))>0:
+      parasDict.append( {lastHeader : " ".join(ParaLines)})
+      #parasDict.append( { lastHeader: " ".join(ParaLines)} )
+      lastHeader=""
+      ParaLines=[]
 
   wordcount = Counter(word_tokenize(rtxt))
   #resDict["Headers"]="{}".format(parasDict)
@@ -343,8 +393,8 @@ for item in resdfInit.loc[:18].iterrows():
   resDict["HeadersList"] = AllHeadersList
   resDict["Wordcount"] =  wordcount
 
-  ORes = GetEmptyRes()
-  OResfill =  FillResume(resDict=resDict, revHash=revHash, ORes=ORes)
+  ORes = ResumeMapper.GetEmptyRes(xpath=xpath)
+  OResfill =  FFillResume(resDict=resDict, revHash=revHash, ORes=ORes)
   resDict["OResfill"] =  OResfill
 
   resume.append(resDict)
