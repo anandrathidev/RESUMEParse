@@ -21,7 +21,7 @@ def LoadResMapper(xpath):
   return resumeJSONMapper
 
 
-def GetEmptyRes():
+def GetEmptyRes(xpath):
   resumeJSONMapper=None
   try:
     with open(xpath + "/RESUME_JSON_EMPTY.json") as RM:
@@ -52,6 +52,7 @@ def traverse(dic, path=None):
     for x in dic.keys():
       local_path = path[:]
       local_path.append(x)
+      print("x={} local_path {}".format(x, local_path))
       for b in traverse(dic[x], local_path):
         yield b
   else:
@@ -59,11 +60,18 @@ def traverse(dic, path=None):
       local_path = path[:]
       #local_path.append(x)
       for x in dic:
-        x = replaceWithRegExp(x)
+        if not x is None:
+          x = replaceWithRegExp(x)
+        else:
+          print("x is None: dic {} local_path {}".format(dic, local_path))
         yield (x,local_path)
     else:
-      dic = replaceWithRegExp(dic)
-      yield (dic,path)
+      if not dic is None:
+        dic = replaceWithRegExp(dic)
+        yield (dic,path)
+      else:
+        print("x is None: dic {} local_path {}".format(dic, path))
+
 
 
 def getRevKeyHash(xpath):

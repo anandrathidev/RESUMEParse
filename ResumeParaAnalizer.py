@@ -18,8 +18,8 @@ import json
 import nltk
 import MainHeaders
 
-xpath = "D:/Users/anandrathi/Documents/personal/Bussiness/Aleep/"
-#xpath = "C:/temp/DataScience/Aleep/"
+#xpath = "D:/Users/anandrathi/Documents/personal/Bussiness/Aleep/"
+xpath = "C:/temp/DataScience/Aleep/"
 
 nltk.download('punkt')
 
@@ -245,6 +245,7 @@ revHash = ResumeMapper.getRevKeyHash(xpath=xpath)
 import FillResume
 
 def FFillResume(resDict, revHash, ORes):
+  #ORes["basics"]=None
   ORes["profiles"]=[]
   ORes["work experience"]=[]
   ORes["references"]=[]
@@ -308,7 +309,7 @@ def FFillResume(resDict, revHash, ORes):
   return ORes
 
 resume=[]
-for item in resdfInit.loc[:8].iterrows():
+for item in resdfInit.loc[8:18].iterrows():
   rtxt = item[1]['RESUME_TEXT']
   rlines = rtxt.splitlines()
   resDict={

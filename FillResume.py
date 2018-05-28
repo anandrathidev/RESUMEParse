@@ -70,6 +70,7 @@ def fillBasic(v, ORes, d):
   MT ="basics"
   wede = {
       "name": "",
+      "personal":"",
       "other": "",
       "label": "",
       "dob": "",

@@ -6,6 +6,8 @@
     "email": "",
     "phone": "",
     "url": "",
+	"other":"",
+	"personal":"",
     "summary": "",
     "location": {
       "address": "",
@@ -19,36 +21,27 @@
         "network": "",
         "username": "",
         "url": ""
+      },
+      {
+        "network": "",
+        "username": "",
+        "url": ""
       }
     ]
   },
-  "workexperience": [
-    {
-      "project": ""
-    }
-  ],
   "work experience": [
     {
-	  "experience":"", 
       "organization": "",
       "location": "",
-	  "project":"",
-      "client": "",
-      "roles": "",
       "description": "",
       "position": "",
       "url": "",
       "startDate": "",
       "endDate": "",
       "summary": "",
-      "highlights": "",
-      "duration": "",
-      "teamsize":"",
-      "keywords": ""
+      "highlights": [ ]
     }
-	
-    ],
-
+  ],
   "volunteer": [
     {
       "organization": "",
@@ -59,12 +52,12 @@
       "startDate": "",
       "endDate": "",
       "summary": "",
-      "highlights": ""
+      "highlights": [ ]
+      
     }
   ],
   "education": [
     {
-	  "education":"",
       "institution": "",
       "area": "",
       "studyType": "Bachelor",
@@ -91,13 +84,18 @@
       "summary": ""
     }
   ],
-  "skills": 
+  "skills": [
     {
       "name": "",
       "level": "",
-      "keywords": ""
+      "keywords": [ ]
+    },
+    {
+      "name": "",
+      "level": "",
+      "keywords": []
     }
-  ,
+  ],
   "languages": [  {"language": "English", 
 				   "fluency": "Intermediate" }
 				],
@@ -111,6 +109,20 @@
     {
       "name": "",
       "reference": ""
+    }
+  ],
+  "projects": [
+    {
+      "name": "",
+      "description": "",
+      "highlights": [  "", "", "" ],
+      "keywords": [ ],
+      "startDate": "",
+      "endDate": "",
+      "url": "",
+      "roles": [   ],
+      "entity": "",
+      "type": ""
     }
   ],
   "meta": {
