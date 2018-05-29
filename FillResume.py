@@ -51,10 +51,11 @@ def fillObjL2(v, wed , d):
   try:
     wed[ v[1] ][ v[2] ] =   wed[ v[1] ][ v[2] ] + " "+ d
   except Exception as e:
-    print("{}".format(e))
+    print("fillObjL2 {}".format(e))
     print("wed = {}".format(wed))
     print("v[] = {}".format(v))
-    print("v[1] = {}".format(v[1]))
+    print("fillObjL2 v[1] = {}".format(v[1]))
+    print("fillObjL2 v[2] = {}".format(v[2]))
 
 def fillSkills(v, ORes, d):
   MT ="skills"
@@ -65,6 +66,17 @@ def fillSkills(v, ORes, d):
   dictObjChk(MT=MT,ORes=ORes,wede=wede)
   wed =  ORes[MT]
   fillObjL1(v, wed , d)
+
+def fillLanguage(v, ORes, d):
+  MT ="languages"
+  wede = {
+      "language": "",
+      "fluency": ""
+  }
+  dictObjChk(MT=MT,ORes=ORes,wede=wede)
+  wed =  ORes[MT]
+  fillObjL1(v, wed , d)
+
 
 def fillBasic(v, ORes, d):
   MT ="basics"
@@ -80,6 +92,7 @@ def fillBasic(v, ORes, d):
       "gender": "",
       "nationality": "",
       "summary": "",
+      "profiles":"",
       "location": {
         "address": "",
         "postalCode": "",
@@ -106,6 +119,7 @@ def fillEdu(v, ORes, d):
     "startDate": "",
     "endDate": "",
     "gpa": "",
+    "others":"",
     "courses": ""
   }
   wed = dictObjListChk(MT=MT, ORes=ORes, wede=wede)

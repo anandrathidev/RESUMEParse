@@ -13,6 +13,13 @@ def getAntiHeaders():
 
 def getMainHeaders():
   MAINHEADERS = [
+r"LinkedIn",
+r"Skype",
+r"linked-in",
+r'LinkedIn\s+Profile',
+r'Language\s+Proficiency',
+r'Local\s+Address',
+r'Local\s+Address',
 r'technical\s+(&|and)*\s+analytical\s+skill-set',
 r'skype',
 r'e-mail',

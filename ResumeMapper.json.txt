@@ -19,8 +19,9 @@
         "city": "city",
         "countryCode": "country",
         "region": ["region", "state"]
+		"profiles": ["LinkedIn Profile", "LinkedIn" ,"Skype","linked-in","LINKEDIN"] 
       },
-      "profiles": ["LinkedIn Profile", "LinkedIn" ,"Skype","linked-in","LINKEDIN"] 
+      
       
     },
     "work experience": 

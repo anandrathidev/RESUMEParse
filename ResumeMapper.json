@@ -13,14 +13,14 @@
         "Gender":"Gender",
         "Nationality":"Nationality",
       "summary": ["About Me","Summary","JOB OBJECTIVE","SUMMARY","[A] Summary","JOB OBJECTIVE","CO-CURRICULAR ACTIVITIES","EX-CURRICULAR ACTIVITIES","ABILITIES","Career Vision","vision","Objective","Brief Overview","PROFILE SUMMARY","CAREER CONTOUR","Job Objective","Career Vision","OBJECTIVE","OVERVIEW","Profile Summary","Synopsis","Profile summary","CAREER OBJECTIVE","CARRIER OBJECTIVES","Career objective", "CAREER OBJECTIVE & SUMMARY", "Career Objectives","Objectives","OBJECTIVES", "Personal Glipse","Personal Details", "ADDITIONAL INFORMATION","About Me","SYNOPSIS","Personal Strength", "PERSONAL", "PERSONAL STRENGTH", "PERSONAL INFORMATION", "PERSONAL SUMMARY", "Personal Information","PERSONAL DOSSIER","PERSONNAL DETAILS","PERSONAL PROFILE","PERSONAL INFO", "PERSONAL TRAITS", "Personal Detail", "Personal information","Personal Interests","PERSONAL ATTRIBUTES","PERSONAL VITAE", "Personal Background", "PERSONAL STRENGTHS", "PERSONAL SKILLS", "Personal Attributes","Profile","PERSONEL INFORMATION", "Personal Info", "Personals Details", "PERSONAL INFORMATIONS", "Personal Profile", "Personal Dossier", "PERSONAL DETAILS", "Personal Details","PERSONAL QUALITIES", "Personality Traits", "Personal Skills", "Personal Traits", "PERSONAL DETAIL", "PERSONNAL DETAILS", "PERSONAL VITAE", "PERSONAL  QUALITIES"], 
+      "profiles": ["LinkedIn Profile", "LinkedIn" ,"Skype","linked-in","LINKEDIN"] ,
       "location": {
-        "address": ["ADDRESS", "Address","Current Address","Present Location","Present location","Residence","Current Location","Add","Corresponding Address"],
+        "address": ["Local Address", "ADDRESS", "Address","Current Address","Present Location","Present location","Residence","Current Location","Add","Corresponding Address"],
         "postalCode": ["Pin No","zip","pin code","zip code"],
         "city": "city",
         "countryCode": "country",
         "region": ["region", "state"]
-      },
-      "profiles": ["LinkedIn Profile", "LinkedIn" ,"Skype","linked-in","LINKEDIN"] 
+      }
       
     },
     "work experience": 
@@ -127,7 +127,7 @@
 		"STRENGTH AND SKILLS", "Strengths & Weakness", "STRENGTH", "strengths"]
       },
     "languages":  {
-        "language": "languages",
+        "language": ["Language Proficiency", "languages", "language"],
         "fluency": "fluency"
       },
     "interests": 

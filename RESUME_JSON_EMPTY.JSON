@@ -1,6 +1,8 @@
 {
   "basics": {
     "name": "",
+	"dob":"",
+	"profiles":"",
     "label": "Programmer",
     "image": "",
     "email": "",
@@ -9,25 +11,14 @@
 	"other":"",
 	"personal":"",
     "summary": "",
+    "profiles": "",
     "location": {
       "address": "",
       "postalCode": "",
       "city": "",
       "countryCode": "",
       "region": ""
-    },
-    "profiles": [
-      {
-        "network": "",
-        "username": "",
-        "url": ""
-      },
-      {
-        "network": "",
-        "username": "",
-        "url": ""
-      }
-    ]
+    }
   },
   "work experience": [
     {
@@ -64,7 +55,8 @@
       "startDate": "",
       "endDate": "",
       "gpa": "",
-      "courses": []
+      "courses": "",
+	  "others":""
     }
   ],
   "awards": [
@@ -96,8 +88,8 @@
       "keywords": []
     }
   ],
-  "languages": [  {"language": "English", 
-				   "fluency": "Intermediate" }
+  "languages": [  {"language": "", 
+				   "fluency": "" }
 				],
   "interests": [
     {
