@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue May 29 23:30:47 2018
+Created on Wed May 30 20:35:39 2018
 
 @author: anandrathi
 """
@@ -25,9 +25,17 @@ import json
 import nltk
 import MainHeaders
 
-xpath = "C:/Users/anandrathi/RESUMEParse/git/"
+#xpath = "D:/Users/anandrathi/Documents/personal/Bussiness/Aleep/"
+xpath = "C:/temp/DataScience/Aleep/GIT/RESUMEParse/"
+
 nltk.download('punkt')
 
+import logging
+logging.basicConfig(
+    handlers=[logging.FileHandler(xpath + '/log.log', 'w', 'utf-8')],
+    format='%(levelname)s: %(message)s',
+    level=logging.WARNING #CRITICAL ERROR WARNING  INFO    DEBUG    NOTSET
+)
 
 EMAIL_PATTERN = r'[\w\.-]+@[\w\.-]+'
 NO_NAME = set(["phone","resume", "vitae" , "of", "curriculum", "curriculam"," carriculum", "curriculum-vitae",
@@ -41,8 +49,6 @@ NO_NAME = set(["phone","resume", "vitae" , "of", "curriculum", "curriculam"," ca
                  ",excellence" ,"highest", "echelons", "technical", "level",
                   "professional", "summary","pic", "b tech"
                ,"\t"])
-len(NO_NAME)
-
 PAT = re.compile(EMAIL_PATTERN)
 
 
@@ -50,11 +56,18 @@ PAT = re.compile(EMAIL_PATTERN)
 ###################### empty Resume ############################
 ##################################################################
 EmpryResumeJSON = None
-with open(xpath + "RESUME_JSON_EMPTY.json") as RM:
-  try:
-    EmpryResumeJSON =  json.load( RM )
-  except Exception as e:
-    print(" load ResumeJSON {} ".format(e))
+def getEmpryResumeJSON():
+  EmpryResumeJSON = None
+  with open(xpath + "RESUME_JSON_EMPTY.json") as RM:
+    try:
+      EmpryResumeJSON =  json.load( RM )
+    except Exception as e:
+      logging.debug(" load ResumeJSON {} ".format(e))
+
+ return EmpryResumeJSON
+
+if EmpryResumeJSON==None:
+  EmpryResumeJSON=getEmpryResumeJSON()
 
 def GetHeadingsSets():
   from itertools import chain
@@ -66,8 +79,6 @@ def GetHeadingsSets():
 #from nameparser.parser import HumanName
 
 HeadSet = GetHeadingsSets()
-type(HeadSet)
-
 
 def GetAvgLineDetails(textSer, avgHeaderWords,  avgHeaderLen):
   rlines=[]
@@ -79,8 +90,6 @@ def GetAvgLineDetails(textSer, avgHeaderWords,  avgHeaderLen):
   avgWordCount = np.mean([ len(rline.split()) for  rline in rlines if len(rline.strip())>avgHeaderLen ])
   stdWordCount = np.std([ len(rline.split()) for  rline in rlines if len(rline.strip())>avgHeaderLen ])
   return avgWordLen,stdWordLen ,avgWordCount, stdWordCount
-
-
 
 def CreateAllHeadRegExp(HeadSet):
   regList = []
@@ -102,8 +111,6 @@ def CreateHeadRegExp(HeadSet):
   HeadExtraxtRe = re.compile(HeadExtraxtRegStr, flags= re.I | re.DOTALL )
   return HeadExtraxtRe
 
-
-
 from scipy import stats
 np.random.seed(7654567)
 
@@ -122,13 +129,13 @@ def HeaderStats(line,
      if wcnt< avgWordCount:
        isHeader+=1
        if False:
-         print("This is header rvsWord test :{} pval={} wcnt={}".format(isHeader,
+         logging.debug("This is header rvsWord test :{} pval={} wcnt={}".format(isHeader,
              abs(pval.pvalue), wcnt))
    wpval = stats.ttest_1samp(rvsHeader, wcnt)
    if abs(wpval.pvalue) > 0.05:
      isHeader+=1
      if False:
-       print("This is header rvsHeader test :{} pval={} wcnt={}".format(isHeader,
+       logging.debug("This is header rvsHeader test :{} pval={} wcnt={}".format(isHeader,
            abs(wpval.pvalue), wcnt))
 
    pval = stats.ttest_1samp(rvsWordLen, len(line))
@@ -136,13 +143,13 @@ def HeaderStats(line,
      if(len(line)< avgWordLen):
        isHeader+=1
        if False:
-         print("This is header rvsWordLen test :{} pval={}  len(line)={}".format(isHeader,
+         logging.debug("This is header rvsWordLen test :{} pval={}  len(line)={}".format(isHeader,
            abs(pval.pvalue), len(line) ) )
    wpval = stats.ttest_1samp(rvsHeaderLen, len(line))
    if abs(wpval.pvalue) > 0.05:
      isHeader+=1
      if False:
-       print("This is header rvsHeaderLen test :{} pval={}  len(line)={}".format(isHeader, abs(wpval.pvalue), len(line) ) )
+       logging.debug("This is header rvsHeaderLen test :{} pval={}  len(line)={}".format(isHeader, abs(wpval.pvalue), len(line) ) )
    return isHeader
 
 
@@ -161,8 +168,6 @@ hregall =  CreateAllHeadRegExp(oldHeaders)
 
 antiHeaders = MainHeaders.getAntiHeaders()
 AntiHeadMatchpattern=r"\s*" + r"?("  + "|".join(antiHeaders) + r")"
-
-
 
 
 avgHeaderLen = np.mean([ len(head) for  head in oldHeaders if len(head.strip())>0 ])
@@ -185,11 +190,8 @@ rvsHeaderLen = stats.norm.rvs(loc=avgHeaderLen, scale=stdHeaderLen, size=(50))
 from collections import Counter
 
 MYDEBUG=False
-#Word Frequncy
-#Heads per line
-#Head List Order
-#Head new lines
 from nltk import word_tokenize
+
 def FindHeadersInSingleLine(line):
   HeaderStack=[]
   parasDict=[]
@@ -200,12 +202,12 @@ def FindHeadersInSingleLine(line):
     for word in witerator:
       if re.match(HeadSplitpattern, word, flags=re.IGNORECASE) and (not re.match(AntiHeadMatchpattern, word, flags=re.IGNORECASE)) :
         if MYDEBUG:
-          print("FindHeadersInSingleLine::HeadSplitpattern {}".format(word))
+          logging.debug("FindHeadersInSingleLine::HeadSplitpattern {}".format(word))
         if len(HeaderStack) >0:
           lastHeader=HeaderStack.pop()
         if len(ParaLines) >0:
           if MYDEBUG:
-            print("FindHeadersInSingleLine::ParaLines {}".format(ParaLines))
+            logging.debug("FindHeadersInSingleLine::ParaLines {}".format(ParaLines))
           parasDict.append({ lastHeader : " ".join(ParaLines)})
           lastHeader=""
           ParaLines=[]
@@ -213,7 +215,7 @@ def FindHeadersInSingleLine(line):
       elif len(HeaderStack) >0:
         ParaLines.append( word )
         if MYDEBUG:
-          print("FindHeadersInSingleLine::ParaLines.append {}".format(word))
+          logging.debug("FindHeadersInSingleLine::ParaLines.append {}".format(word))
     if len(HeaderStack) >0 :
       ParaLines.append( word )
       lastHeader=HeaderStack.pop()
@@ -231,13 +233,11 @@ def SplitHeader(hline):
 
 
 import ResumeMapper
-revHash = ResumeMapper.getRevKeyHash(xpath=xpath)
-#ORes = ResumeMapper.GetEmptyRes(xpath=xpath)
-#print("Init ORes = {} ".format(ORes))
-
 import FillResume
 
-def FFillResume(resDict, revHash, ORes):
+def FFillResume(resDict, logging):
+  ORes = ResumeMapper.GetEmptyRes(xpath=xpath)
+  revHash = ResumeMapper.getRevKeyHash(xpath=xpath)
   #ORes["basics"]=None
   ORes["profiles"]=[]
   ORes["work experience"]=[]
@@ -248,37 +248,36 @@ def FFillResume(resDict, revHash, ORes):
   ORes["publications"]=[]
   ORes["languages"]=[]
   ORes["references"]=[]
-
   for hi in resDict["Headers"]:
     for h,d in hi.items():
       for k,v in revHash.items():
-        #print("FillResume SEARCH HEADER {} HASH {}" .format(h, k) )
+        #logging.debug("FillResume SEARCH HEADER {} HASH {}" .format(h, k) )
         k=k.strip()
         h=h.strip()
         sr = re.fullmatch(k,h, re.IGNORECASE)
         if not sr is None: # FOUND!!
-          print("=================================")
+          logging.debug("=================================")
           v = v.replace("'", '').replace('[', '').replace(']', '')
           v =  [  vs.strip()  for vs in v.split(",") ]
           tORes=ORes
-          print("FillResume SEARCH Result:{} pattern:{} hash:{} vec:{}" .format(sr, k, h, v) )
-          #print("FillResume FOUND HEADER {} HASH {}" .format(h, v) )
+          logging.debug("FillResume SEARCH Result:{} pattern:{} hash:{} vec:{}" .format(sr, k, h, v) )
+          #logging.debug("FillResume FOUND HEADER {} HASH {}" .format(h, v) )
           lastvi=None
           if v[0] == "basics":
-            FillResume.fillBasic(v, ORes, d)
+            FillResume.fillBasic(v, ORes, d, logging)
           if v[0] == "profiles":
               ORes["profiles"].append( {"url" : d })
 
               ORes["profiles"].append( {"url" : d })
 
           if v[0] == "work experience":
-            FillResume.fillWorkExp(v, ORes, d)
+            FillResume.fillWorkExp(v, ORes, d, logging)
 
           if v[0] == "volunteer":
             #fillWorkExp(v, ORes, d)
             pass
           if v[0] == "education":
-            FillResume.fillEdu(v, ORes, d)
+            FillResume.fillEdu(v, ORes, d, logging)
           if v[0] == "awards":
             #fillWorkExp(v, ORes, d)
             pass
@@ -286,7 +285,7 @@ def FFillResume(resDict, revHash, ORes):
             #fillWorkExp(v, ORes, d)
             pass
           if v[0] == "skills":
-            FillResume.fillSkills(v, ORes, d)
+            FillResume.fillSkills(v, ORes, d, logging)
           if v[0] == "languages":
             #fillWorkExp(v, ORes, d)
             pass
@@ -296,18 +295,13 @@ def FFillResume(resDict, revHash, ORes):
           if v[0] == "references":
             #fillWorkExp(v, ORes, d)
             pass
-
           break
 
   return ORes
 
-resume=[]
-
-def GetResumJSON(rtxt):
+def GetResumeTxt2JSON(rtxt):
   rlines = rtxt.splitlines()
-  resDict={
-      "TEXT": rtxt
-         }
+  resDict={  }
   parasDict=[]
   ##Extract TOP
   AllHeadersList=[]
@@ -320,24 +314,24 @@ def GetResumJSON(rtxt):
     line=line.strip()
     ParaLinesw = FindHeadersInSingleLine(line)
     if MYDEBUG:
-      print(" ParaLinesw  {} ".format(ParaLinesw))
+      logging.debug(" ParaLinesw  {} ".format(ParaLinesw))
     if not (ParaLinesw is None):
       parasDict.extend(ParaLinesw)
       continue
 
     isHeader += HeaderStats(line, avgWordCount, rvsWord, rvsHeader, rvsWordLen, rvsHeaderLen)
     if MYDEBUG:
-      print("")
-      print("============Stats==isHeader={}".format(isHeader))
+      logging.debug("")
+      logging.debug("============Stats==isHeader={}".format(isHeader))
     if MatchRegExp(text=line, cregs=hregall)>0:
         #most probablity this is an header line
         lheader, restofLine = SplitHeader(line)
         if not re.match(AntiHeadMatchpattern, lheader, flags=re.IGNORECASE):
             isHeader+=2
             isMatch=1
-        #print("is in header list :{}   {}".format(line, isHeader))
+        #logging.debug("is in header list :{}   {}".format(line, isHeader))
     if isHeader>=3 and isMatch:
-         #print("This is header :{}".format(line))
+         #logging.debug("This is header :{}".format(line))
          if len(HeaderStack) >0:
            lastHeader=HeaderStack.pop()
          if len(ParaLines) >0:
@@ -352,17 +346,17 @@ def GetResumJSON(rtxt):
          HeaderStack.append(lheader)
          ParaLines.append(restofLine)
          if MYDEBUG:
-           print("")
-           print("==============isHeader={}".format(isHeader))
-           print(line)
-           print("============================")
+           logging.debug("")
+           logging.debug("==============isHeader={}".format(isHeader))
+           logging.debug(line)
+           logging.debug("============================")
     elif isHeader>2:
         if MYDEBUG:
-          print("")
-          print("===== Sub Header==============isHeader={}".format(isHeader))
-          print(line)
-          print("============================")
-          print("")
+          logging.debug("")
+          logging.debug("===== Sub Header==============isHeader={}".format(isHeader))
+          logging.debug(line)
+          logging.debug("============================")
+          logging.debug("")
     else:
         if len(HeaderStack) >0:
           ParaLines.append(line)
@@ -377,16 +371,11 @@ def GetResumJSON(rtxt):
       lastHeader=""
       ParaLines=[]
 
-  wordcount = Counter(word_tokenize(rtxt))
-  #resDict["Headers"]="{}".format(parasDict)
-  #resDict["HeadersList"]="{}".format(AllHeadersList)
-  #resDict["Wordcount"]="{}".format(wordcount)
   resDict["Headers"] = parasDict
   resDict["HeadersList"] = AllHeadersList
-  resDict["Wordcount"] =  wordcount
+  #resDict["Wordcount"] =  wordcount
 
-  ORes = ResumeMapper.GetEmptyRes(xpath=xpath)
-  OResfill =  FFillResume(resDict=resDict, revHash=revHash, ORes=ORes)
-  resDict["OResfill"] =  OResfill
-  return resDict
-
+  OResfill =  FFillResume(resDict=resDict, logging=logging)
+  #resDict["OResfill"] =  OResfill
+  OResfillList.append(OResfill)
+  return OResfill
