@@ -7,7 +7,7 @@ Created on Sun May 27 13:05:50 2018
 
 
 
-def dictObjListChk(MT,ORes,wede):
+def dictObjListChk(MT,ORes,wede, logging):
   try:
     if not MT in ORes:
       ORes[MT]=[]
@@ -16,13 +16,13 @@ def dictObjListChk(MT,ORes,wede):
     ORes[MT].append(wede)
     wed =  ORes[MT][-1]
   except Exception as e:
-    print("{}".format(e))
-    print("ORes = {}".format(ORes))
-    print("wede = {}".format(wede))
+    logging.error("{}".format(e))
+    logging.error("ORes = {}".format(ORes))
+    logging.error("wede = {}".format(wede))
   return wed
 
 
-def dictObjChk(MT,ORes,wede):
+def dictObjChk(MT,ORes,wede,logging):
   try:
     if not MT in ORes:
       ORes[MT]=wede
@@ -31,54 +31,54 @@ def dictObjChk(MT,ORes,wede):
     if not isinstance(ORes[MT],dict) :
       ORes[MT]=wede
   except Exception as e:
-    print("{}".format(e))
-    print("ORes = {}".format(ORes))
-    print("wede = {}".format(wede))
+    logging.error("{}".format(e))
+    logging.error("ORes = {}".format(ORes))
+    logging.error("wede = {}".format(wede))
   return ORes[MT]
 
-def fillObjL1(v, wed , d):
+def fillObjL1(v, wed , d, logging):
   try:
     wed[v[1]] =  wed[v[1]] + " " + d
   except Exception as e:
-    print("{}".format(e))
-    print("wed = {}".format(wed))
-    print("v[] = {}".format(v))
-    print("v[1] = {}".format(v[1]))
-    print("d = {}".format(d))
+    logging.error("{}".format(e))
+    logging.error("wed = {}".format(wed))
+    logging.error("v[] = {}".format(v))
+    logging.error("v[1] = {}".format(v[1]))
+    logging.error("d = {}".format(d))
 
 
-def fillObjL2(v, wed , d):
+def fillObjL2(v, wed , d, logging):
   try:
     wed[ v[1] ][ v[2] ] =   wed[ v[1] ][ v[2] ] + " "+ d
   except Exception as e:
-    print("fillObjL2 {}".format(e))
-    print("wed = {}".format(wed))
-    print("v[] = {}".format(v))
-    print("fillObjL2 v[1] = {}".format(v[1]))
-    print("fillObjL2 v[2] = {}".format(v[2]))
+    logging.error("fillObjL2 {}".format(e))
+    logging.error("wed = {}".format(wed))
+    logging.error("v[] = {}".format(v))
+    logging.error("fillObjL2 v[1] = {}".format(v[1]))
+    logging.error("fillObjL2 v[2] = {}".format(v[2]))
 
-def fillSkills(v, ORes, d):
+def fillSkills(v, ORes, d, logging):
   MT ="skills"
   wede = {
       "level": "",
       "keywords": ""
   }
-  dictObjChk(MT=MT,ORes=ORes,wede=wede)
+  dictObjChk(MT=MT,ORes=ORes,wede=wede, logging=logging)
   wed =  ORes[MT]
-  fillObjL1(v, wed , d)
+  fillObjL1(v, wed , d, logging)
 
-def fillLanguage(v, ORes, d):
+def fillLanguage(v, ORes, d, logging):
   MT ="languages"
   wede = {
       "language": "",
       "fluency": ""
   }
-  dictObjChk(MT=MT,ORes=ORes,wede=wede)
+  dictObjChk(MT=MT,ORes=ORes,wede=wede, logging=logging)
   wed =  ORes[MT]
-  fillObjL1(v, wed , d)
+  fillObjL1(v, wed , d, logging)
 
 
-def fillBasic(v, ORes, d):
+def fillBasic(v, ORes, d, logging):
   MT ="basics"
   wede = {
       "name": "",
@@ -102,31 +102,32 @@ def fillBasic(v, ORes, d):
         },
       "profiles" : ""
     }
-  dictObjChk(MT=MT,ORes=ORes,wede=wede)
+  dictObjChk(MT=MT,ORes=ORes,wede=wede, logging=logging)
   wed =  ORes[MT]
   if v[1]=="location":
-    fillObjL2(v, wed , d)
+    fillObjL2(v, wed , d, logging)
   else :
-    fillObjL1(v, wed , d)
+    fillObjL1(v, wed , d, logging)
 
-def fillEdu(v, ORes, d):
+def fillEdu(v, ORes, d, logging):
   MT ="education"
   wede = {
-    "education":"",
-    "institution": "",
-    "area": "",
-    "studyType": "",
-    "startDate": "",
-    "endDate": "",
-    "gpa": "",
-    "others":"",
-    "courses": ""
+      "education":"",
+      "institution": "",
+      "area": "",
+      "studyType": "",
+      "startDate": "",
+      "endDate": "",
+      "gpa": "",
+      "courses": "",
+	  "others":"",
+	  "projects":""          
   }
-  wed = dictObjListChk(MT=MT, ORes=ORes, wede=wede)
-  fillObjL1(v, wed , d)
+  wed = dictObjListChk(MT=MT, ORes=ORes, wede=wede, logging=logging)
+  fillObjL1(v, wed , d, logging)
 
 
-def fillWorkExp(v, ORes, d):
+def fillWorkExp(v, ORes, d, logging):
   MT ="work experience"
   wede = {
     "project":"",
@@ -146,5 +147,5 @@ def fillWorkExp(v, ORes, d):
     "highlights":""
   }
 
-  wed =  dictObjListChk(MT=MT,ORes=ORes,wede=wede)
-  fillObjL1(v, wed , d)
+  wed =  dictObjListChk(MT=MT,ORes=ORes,wede=wede, logging=logging)
+  fillObjL1(v, wed , d, logging)
