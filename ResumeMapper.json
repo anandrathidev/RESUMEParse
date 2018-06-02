@@ -1,14 +1,13 @@
 {
     "basics": {
       "name": ["Name","name","NAME"],
-	  "other":["PASSPORT DETAILS"],
+	  "other":["PASSPORT DETAILS", "Hobbies", "Hobby"],
       "label": ["POSITION","Position","Designation","Title"],
       "dob":["DOB","Date of Birth", "DATE OF BIRTH"],
-      "email": ["email", "emails","E-Mail ID", "E-mail ID","E-Mail", "E-mail", "E-MAIL", 
+      "email": ["Gmail","email", "emails","E-Mail ID", "E-mail ID","E-Mail", "E-mail", "E-MAIL", 
                 "e-mail","Email Id", "EMAIL ADDRESS", "Email me on Indeed", "Email id", "Email-id", "Mailto",
                  "Email-ID", "email", "Email ID msn","E", "EMAIL", "Email ma on Indeed", "Email ID", "Email","mail Id", "Mail id" ],
-      "phone": ["Hand Phone", "phone", "T" ,"contact details","contact","Contact no","Alternate Contact","Contact Information", "Contact No","Cell no", "CONTACT NO","CONTACT AT", "Contact No.","Mobile No.", "MOBILE",
-                "Mobile Numbers","(M)","M", "Phone no.", "Phone","Tal","Ph", "PHONE (MOBILE)","Mobile No","TELEPHONE NO", "Tel", "Mobile no","GSM", "Mobile","Cell", "Mobile ph","Phone no.", "MOBILE NO.","PHONE (MOBILE)","OTHER (MOBILE)","Contact Details","Cell Phone"],
+      "phone": ["Hand Phone", "phone", "T" ,"contact details","contact","Contact no","Alternate Contact","Contact Information", "Contact No","Cell no", "CONTACT NO","CONTACT AT", "Contact No.","Mobile No.", "MOBILE", "MOB", "Mobile Numbers","(M)", "M", "Phone no.", "Phone","Tal","Ph", "PHONE (MOBILE)","Mobile No","TELEPHONE NO", "Tel", "Mobile no","GSM", "Mobile","Cell", "Mobile ph","Phone no.", "MOBILE NO.","PHONE (MOBILE)","OTHER (MOBILE)","Contact Details","Cell Phone"],
         "Marital Status":"Marital Status",
         "Gender":"Gender",
         "Nationality":"Nationality",

@@ -18,8 +18,8 @@ import json
 import nltk
 import MainHeaders
 
-#xpath = "D:/Users/anandrathi/Documents/personal/Bussiness/Aleep/"
-xpath = "C:/temp/DataScience/Aleep/GIT/RESUMEParse/"
+xpath = "C:/Users/anandrathi/RESUMEParse/git/"
+#xpath = "C:/temp/DataScience/Aleep/GIT/RESUMEParse/"
 
 nltk.download('punkt')
 
@@ -28,7 +28,7 @@ import logging
 logging.basicConfig(
     handlers=[logging.FileHandler(xpath + '/log.log', 'w', 'utf-8')],
     format='%(levelname)s: %(message)s',
-    level=logging.WARNING #CRITICAL ERROR WARNING  INFO    DEBUG    NOTSET 
+    level=logging.DEBUG #WARNING #CRITICAL ERROR WARNING  INFO    DEBUG    NOTSET
 )
 
 EMAIL_PATTERN = r'[\w\.-]+@[\w\.-]+'
@@ -196,6 +196,12 @@ rvsHeaderLen = stats.norm.rvs(loc=avgHeaderLen, scale=stdHeaderLen, size=(50))
 
 from collections import Counter
 
+
+xline="email:       masanamurthi@gmail.com  Hobbies		:    Listening Music and Sports                 "
+xm=re.findall(HeadSplitpattern, xline, flags=re.IGNORECASE)
+print(xm)
+dict(zip(xm,rxm))
+
 MYDEBUG=False
 #Word Frequncy
 #Heads per line
@@ -203,38 +209,15 @@ MYDEBUG=False
 #Head new lines
 from nltk import word_tokenize
 def FindHeadersInSingleLine(line):
-  HeaderStack=[]
-  parasDict=[]
-  ParaLines=[]
   m = re.findall(HeadSplitpattern,  line)
   if len(m)>1:
-    witerator = iter(line.split())
-    for word in witerator:
-      if re.match(HeadSplitpattern, word, flags=re.IGNORECASE) and (not re.match(AntiHeadMatchpattern, word, flags=re.IGNORECASE)) :
-        if MYDEBUG:
-          logging.debug("FindHeadersInSingleLine::HeadSplitpattern {}".format(word))
-        if len(HeaderStack) >0:
-          lastHeader=HeaderStack.pop()
-        if len(ParaLines) >0:
-          if MYDEBUG:
-            logging.debug("FindHeadersInSingleLine::ParaLines {}".format(ParaLines))
-          parasDict.append({ lastHeader : " ".join(ParaLines)})
-          lastHeader=""
-          ParaLines=[]
-        HeaderStack.append(word )
-      elif len(HeaderStack) >0:
-        ParaLines.append( word )
-        if MYDEBUG:
-          logging.debug("FindHeadersInSingleLine::ParaLines.append {}".format(word))
-    if len(HeaderStack) >0 :
-      ParaLines.append( word )
-      lastHeader=HeaderStack.pop()
-      parasDict.append({ lastHeader : " ".join(ParaLines)})
+    rxm=[ x.replace(":","").strip()  for x in re.split("|".join(m), line) if x.strip() !=""]
+    mrxm=dict(zip(m,rxm))
+    if len(mrxm)>1:
+      mrxml = [ {k:v} for k,v in mrxm.items()]
+      return mrxml
+  return None
 
-  if len(parasDict) >0:
-    return  parasDict
-  else:
-    return None
 
 def SplitHeader(hline):
   header = re.split(r':|:-|:--|\n|\t',hline)
@@ -317,7 +300,7 @@ def FFillResume(resDict, revHash, ORes, logging):
 
 OResfillList=[]
 resume=[]
-for item in resdfInit.loc[1:3000].iterrows():
+for item in resdfInit.loc[1:300].iterrows():
   rtxt = item[1]['RESUME_TEXT']
   rlines = rtxt.splitlines()
   resDict={
@@ -336,10 +319,13 @@ for item in resdfInit.loc[1:3000].iterrows():
     para=""
     line=line.strip()
     ParaLinesw = FindHeadersInSingleLine(line)
-    if MYDEBUG:
+    if True:
+      #print(" ParaLinesw  {} ".format(ParaLinesw))
       logging.debug(" ParaLinesw  {} ".format(ParaLinesw))
     if not (ParaLinesw is None):
+      #print(" ParaLinesw  {} ".format(ParaLinesw))
       parasDict.extend(ParaLinesw)
+      #print(" ParaLinesw  {} ".format(parasDict))
       continue
 
     isHeader += HeaderStats(line, avgWordCount, rvsWord, rvsHeader, rvsWordLen, rvsHeaderLen)
